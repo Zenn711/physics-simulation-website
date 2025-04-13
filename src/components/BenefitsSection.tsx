@@ -14,14 +14,14 @@ interface BenefitProps {
 
 const Benefit = ({ icon, title, description, color, delay = 0 }: BenefitProps) => (
   <div 
-    className="p-6 rounded-xl backdrop-blur-md bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+    className="p-6 rounded-xl backdrop-blur-md bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg h-full flex flex-col"
     style={{ animationDelay: `${delay}ms` }}
   >
     <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gradient-to-br ${color} bg-opacity-10`}>
       <div className="text-white">{icon}</div>
     </div>
     <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
-    <p className="text-white/70">{description}</p>
+    <p className="text-white/70 flex-grow">{description}</p>
   </div>
 );
 
@@ -58,11 +58,11 @@ const BenefitsSection = () => {
   ];
 
   return (
-    <section className="py-12 relative overflow-hidden">
+    <section className="py-10 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-900/50 to-gray-950/50 pointer-events-none"></div>
       <div className="container mx-auto px-4">
         <ScrollReveal animation="fade-in">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <span className="uppercase text-xs font-medium tracking-widest text-white/70 mb-2 block font-sans">Why Use Our Platform</span>
             <h2 className="mb-4 font-tech">
               <span className="text-white">Learning</span>

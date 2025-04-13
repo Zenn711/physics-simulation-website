@@ -28,7 +28,7 @@ const FeaturesSection = () => {
       title: "Pendulum Dynamics",
       description: "Visualize the elegant motion of pendulums and understand the principles of harmonic oscillation.",
       category: "Mechanics",
-      position: 'right' as const,
+      position: 'center' as const,
       color: "from-neon-blue to-neon-purple" 
     },
     {
@@ -36,7 +36,7 @@ const FeaturesSection = () => {
       title: "Spring Force",
       description: "Experiment with compression and tension in spring systems while visualizing energy transfer in real-time.",
       category: "Energy",
-      position: 'left' as const,
+      position: 'right' as const,
       color: "from-neon-purple to-neon-cyan"
     },
     {
@@ -44,7 +44,7 @@ const FeaturesSection = () => {
       title: "Wave Propagation",
       description: "Visualize how waves travel through a medium and experiment with amplitude, frequency, and damping effects.",
       category: "Waves",
-      position: 'right' as const,
+      position: 'left' as const,
       color: "from-neon-cyan to-neon-blue"
     },
     {
@@ -52,7 +52,7 @@ const FeaturesSection = () => {
       title: "Interactive Learning",
       description: "Adjust parameters and see immediate results, making abstract concepts concrete and tangible.",
       category: "Education",
-      position: 'left' as const,
+      position: 'center' as const,
       color: "from-neon-blue to-neon-purple"
     },
     {
@@ -91,12 +91,8 @@ const FeaturesSection = () => {
     };
   }, []);
 
-  // Group features for 2-column grid layout
-  const leftFeatures = features.filter((_, index) => index % 2 === 0);
-  const rightFeatures = features.filter((_, index) => index % 2 === 1);
-
   return (
-    <div id="features" ref={sectionRef} className="py-10 md:py-16 relative overflow-hidden">
+    <div id="features" ref={sectionRef} className="py-8 md:py-12 relative overflow-hidden">
       {/* Background gradient effect */}
       <div className="absolute -inset-10 bg-gradient-to-b from-soft-blue/5 via-soft-gray/5 to-white/5 dark:from-neon-cyan/5 dark:via-neon-blue/5 dark:to-neon-purple/5 blur-3xl -z-10"></div>
       
@@ -106,7 +102,7 @@ const FeaturesSection = () => {
       
       <div className="container mx-auto px-4">
         <ScrollReveal animation="fade-in">
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <span className="uppercase text-xs font-medium tracking-widest text-white/70 mb-2 block font-sans">Discover</span>
             <h2 className="mb-4 font-tech">
               <span className="text-white">Explore Our</span>
@@ -120,38 +116,19 @@ const FeaturesSection = () => {
           </div>
         </ScrollReveal>
         
-        <div className="grid md:grid-cols-2 gap-6 relative">
-          {/* Left column */}
-          <div className="space-y-6">
-            {leftFeatures.map((feature, index) => (
-              <div key={index} className="feature-card" style={{animationDelay: `${index * 150}ms`}}>
-                <FeatureCard
-                  icon={feature.icon}
-                  title={feature.title}
-                  description={feature.description}
-                  category={feature.category}
-                  position="left"
-                  color={feature.color}
-                />
-              </div>
-            ))}
-          </div>
-          
-          {/* Right column */}
-          <div className="space-y-6 md:mt-12">
-            {rightFeatures.map((feature, index) => (
-              <div key={index} className="feature-card" style={{animationDelay: `${(index + leftFeatures.length) * 150}ms`}}>
-                <FeatureCard
-                  icon={feature.icon}
-                  title={feature.title}
-                  description={feature.description}
-                  category={feature.category}
-                  position="right"
-                  color={feature.color}
-                />
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          {features.map((feature, index) => (
+            <div key={index} className="feature-card" style={{animationDelay: `${index * 150}ms`}}>
+              <FeatureCard
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+                category={feature.category}
+                position={feature.position}
+                color={feature.color}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>

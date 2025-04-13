@@ -27,14 +27,14 @@ const SimulationPreview = ({ icon, title, color, animationDelay, tabValue }: Sim
         className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden h-full hover:border-white/20 transition-all group"
       >
         <div 
-          className={`p-6 flex flex-col items-center justify-center text-center h-full space-y-4 relative`}
+          className={`p-4 flex flex-col items-center justify-center text-center h-full space-y-3 relative`}
         >
-          <div className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br ${color} bg-opacity-20 group-hover:scale-110 transition-transform duration-300`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br ${color} bg-opacity-20 group-hover:scale-110 transition-transform duration-300`}>
             <div className="text-white">{icon}</div>
           </div>
-          <h3 className="text-lg font-bold text-white">{title}</h3>
+          <h3 className="text-base font-bold text-white">{title}</h3>
           <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-br from-white/5 to-white/0 transition-opacity pointer-events-none"></div>
-          <p className="text-sm text-white/70">Try it now</p>
+          <p className="text-xs text-white/70">Try it now</p>
         </div>
       </motion.div>
     </Link>
@@ -44,28 +44,28 @@ const SimulationPreview = ({ icon, title, color, animationDelay, tabValue }: Sim
 const SimulationPreviewSection = () => {
   const simulations = [
     {
-      icon: <Compass size={24} />,
+      icon: <Compass size={20} />,
       title: "Projectile Motion",
       color: "from-neon-cyan to-neon-blue",
       animationDelay: 1,
       tabValue: "projectile"
     },
     {
-      icon: <Activity size={24} />,
+      icon: <Activity size={20} />,
       title: "Pendulum Dynamics",
       color: "from-neon-blue to-neon-purple",
       animationDelay: 2,
       tabValue: "pendulum"
     },
     {
-      icon: <Zap size={24} />,
+      icon: <Zap size={20} />,
       title: "Spring Force",
       color: "from-neon-purple to-neon-cyan",
       animationDelay: 3,
       tabValue: "spring"
     },
     {
-      icon: <Waves size={24} />,
+      icon: <Waves size={20} />,
       title: "Wave Propagation",
       color: "from-neon-cyan to-neon-blue",
       animationDelay: 4,
@@ -74,11 +74,11 @@ const SimulationPreviewSection = () => {
   ];
 
   return (
-    <section className="py-12 relative">
+    <section className="py-8 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950/50 to-gray-900/50 pointer-events-none"></div>
       <div className="container mx-auto px-4">
         <ScrollReveal animation="fade-in">
-          <div className="text-center mb-10">
+          <div className="text-center mb-6">
             <span className="uppercase text-xs font-medium tracking-widest text-white/70 mb-2 block font-sans">Jump Right In</span>
             <h2 className="mb-4 font-tech">
               <span className="text-white">Try Our</span>
@@ -90,7 +90,7 @@ const SimulationPreviewSection = () => {
           </div>
         </ScrollReveal>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           {simulations.map((sim, index) => (
             <SimulationPreview
               key={index}

@@ -3,6 +3,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Star, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ScrollReveal from './ScrollReveal';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from "@/components/ui/carousel";
 
 interface TestimonialProps {
   quote: string;
@@ -72,45 +79,43 @@ const TestimonialsSection = () => {
     }
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const visibleItems = 3;
+  const [api, setApi] = useState<any>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const nextSlide = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentIndex(prev => 
-      prev + 1 >= testimonials.length - visibleItems + 1 ? 0 : prev + 1
-    );
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-
-  const prevSlide = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentIndex(prev => 
-      prev - 1 < 0 ? testimonials.length - visibleItems : prev - 1
-    );
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-
+  // Auto rotation
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [currentIndex, isAnimating]);
+    if (!api) {
+      return;
+    }
+
+    const startAutoRotate = () => {
+      intervalRef.current = setInterval(() => {
+        api.scrollNext();
+      }, 4000);
+    };
+
+    const stopAutoRotate = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+
+    startAutoRotate();
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      stopAutoRotate();
+    };
+  }, [api]);
 
   return (
-    <div className="py-12 md:py-16 relative overflow-hidden">
+    <div className="py-10 md:py-12 relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute -inset-10 bg-gradient-to-b from-neon-blue/5 via-neon-purple/5 to-neon-cyan/5 blur-3xl -z-10"></div>
       
       <div className="container mx-auto px-4">
         <ScrollReveal animation="fade-in">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8">
             <span className="uppercase text-xs font-medium tracking-widest text-white/70 mb-2 block font-sans">Testimonials</span>
             <h2 className="font-tech mb-4">
               <span className="text-white">What Our</span>
@@ -123,64 +128,51 @@ const TestimonialsSection = () => {
           </div>
         </ScrollReveal>
         
-        <div className="relative">
-          {/* Carousel controls */}
-          <div className="flex justify-end mb-6 space-x-2">
+        <div className="relative mx-auto max-w-5xl">
+          <Carousel 
+            setApi={setApi}
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+          >
+            <CarouselContent>
+              {testimonials.map((testimonial, index) => (
+                <CarouselItem key={index} className="md:basis-1/3 pl-4">
+                  <div className="h-full">
+                    <Testimonial
+                      quote={testimonial.quote}
+                      name={testimonial.name}
+                      role={testimonial.role}
+                      stars={testimonial.stars}
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="hidden md:flex justify-end pt-6 gap-2">
+              <CarouselPrevious className="static transform-none rounded-full bg-white/5 hover:bg-white/10 border border-white/10" />
+              <CarouselNext className="static transform-none rounded-full bg-white/5 hover:bg-white/10 border border-white/10" />
+            </div>
+          </Carousel>
+          
+          {/* Mobile Controls */}
+          <div className="flex justify-center md:hidden mt-6 space-x-2">
             <button 
-              onClick={prevSlide} 
+              onClick={() => api?.scrollPrev()}
               className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
               aria-label="Previous testimonial"
             >
               <ArrowLeft size={20} className="text-white" />
             </button>
             <button 
-              onClick={nextSlide} 
+              onClick={() => api?.scrollNext()}
               className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
               aria-label="Next testimonial"
             >
               <ArrowRight size={20} className="text-white" />
             </button>
-          </div>
-          
-          {/* Testimonial carousel */}
-          <div className="overflow-hidden">
-            <div 
-              ref={sliderRef}
-              className="flex transition-transform duration-500 ease-in-out gap-6"
-              style={{ transform: `translateX(-${currentIndex * (100 / visibleItems)}%)` }}
-            >
-              {testimonials.map((testimonial, index) => (
-                <div key={index} className="min-w-[calc(100%/3-16px)] flex-shrink-0">
-                  <Testimonial
-                    quote={testimonial.quote}
-                    name={testimonial.name}
-                    role={testimonial.role}
-                    stars={testimonial.stars}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Dots indicator */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {[...Array(testimonials.length - visibleItems + 1)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  if (!isAnimating) {
-                    setIsAnimating(true);
-                    setCurrentIndex(i);
-                    setTimeout(() => setIsAnimating(false), 500);
-                  }
-                }}
-                className={cn(
-                  "w-2 h-2 rounded-full transition-all",
-                  i === currentIndex ? "bg-neon-cyan w-6" : "bg-white/30"
-                )}
-                aria-label={`Go to testimonial ${i + 1}`}
-              />
-            ))}
           </div>
         </div>
       </div>
