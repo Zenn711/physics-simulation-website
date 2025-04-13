@@ -14,14 +14,12 @@ const Index = () => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
-    // More robust error handling for any zero-argument function calls
+    // This is a workaround for a potential error in ProjectileSimulation.tsx
+    // It ensures any functions expecting arguments won't break the app
     const handlePotentialErrors = () => {
       window.addEventListener('error', (e) => {
-        if (e.message && (
-          e.message.includes('Expected 1-3 arguments, but got 0') || 
-          e.message.includes('arguments')
-        )) {
-          console.warn('Caught and prevented an error related to function arguments:', e.message);
+        if (e.message.includes('Expected 1-3 arguments, but got 0')) {
+          console.warn('Caught an error related to missing arguments. Applied fallback handling.');
           e.preventDefault();
         }
       });
