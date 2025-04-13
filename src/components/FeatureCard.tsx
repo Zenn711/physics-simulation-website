@@ -31,8 +31,8 @@ const FeatureCard = ({
   return (
     <div 
       className={cn(
-        "w-full my-20 relative",
-        position === 'left' ? 'ml-0 md:mr-auto md:pr-8' : 'mr-0 md:ml-auto md:pl-8',
+        "w-full relative",
+        position === 'left' ? 'ml-0 md:mr-auto' : 'mr-0 md:ml-auto',
         className
       )}
       style={{ animationDelay: `${delay}ms` }}
@@ -43,13 +43,13 @@ const FeatureCard = ({
           "border border-white/10 hover:border-white/20",
           position === 'right' ? 'md:ml-auto' : 'md:mr-auto',
           "bg-white/5 dark:bg-gray-900/20",
-          "w-full md:w-[calc(100%-40px)]", 
+          "w-full", 
           "transform hover:-translate-y-2 hover:shadow-[0_10px_40px_-15px_rgba(6,182,212,0.25)]",
         )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <CardContent className="p-8 flex flex-col md:flex-row gap-6 items-start relative overflow-hidden">
+        <CardContent className="p-5 flex flex-row gap-4 items-start relative overflow-hidden">
           {/* Left position icon styling */}
           {position === 'left' && (
             <div className="feature-icon-container">
@@ -65,8 +65,8 @@ const FeatureCard = ({
             position === 'right' ? 'text-right' : 'text-left'
           )}>
             <div className={`uppercase text-xs font-medium font-sans tracking-widest mb-1 bg-gradient-to-r ${color} bg-clip-text text-transparent`}>{category}</div>
-            <h3 className="text-xl md:text-2xl font-heading font-bold mb-3 text-white">{title}</h3>
-            <p className="text-white/70 mb-4 font-body">{description}</p>
+            <h3 className="text-lg md:text-xl font-heading font-bold mb-2 text-white">{title}</h3>
+            <p className="text-sm text-white/70 mb-3 font-body">{description}</p>
             
             <Link 
               to="/simulation" 

@@ -4,6 +4,10 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import HeroSection from '../components/HeroSection';
 import FeaturesSection from '../components/FeaturesSection';
+import HowItWorksSection from '../components/HowItWorksSection';
+import BenefitsSection from '../components/BenefitsSection';
+import TestimonialsSection from '../components/TestimonialsSection';
+import SimulationPreviewSection from '../components/SimulationPreviewSection';
 import CTASection from '../components/CTASection';
 import ScrollReveal from '../components/ScrollReveal';
 
@@ -23,7 +27,15 @@ const Home = () => {
       <main className="flex-grow">
         <HeroSection />
         
+        <HowItWorksSection />
+        
         <FeaturesSection />
+        
+        <BenefitsSection />
+        
+        <SimulationPreviewSection />
+        
+        <TestimonialsSection />
         
         <ScrollReveal animation="fade-in" delay={100}>
           <CTASection />
