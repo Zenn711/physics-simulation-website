@@ -62,11 +62,17 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
       </TabsContent>
       
       <TabsContent value="pendulum" className="mt-0">
-        <PendulumSimulation />
+        <PendulumSimulation 
+          soundEnabled={soundEnabled}
+          playSound={playPendulumSwing}
+        />
       </TabsContent>
       
       <TabsContent value="spring" className="mt-0">
-        <SpringSimulation />
+        <SpringSimulation 
+          soundEnabled={soundEnabled}
+          playSound={playSpringOscillation}
+        />
       </TabsContent>
     </Tabs>
   );
