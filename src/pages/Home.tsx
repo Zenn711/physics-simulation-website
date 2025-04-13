@@ -11,10 +11,13 @@ const Home = () => {
   useEffect(() => {
     // Scroll to top on page load
     window.scrollTo(0, 0);
+    
+    // Add dark class to html element for dark mode
+    document.documentElement.classList.add('dark');
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
       <Header />
       
       <main className="flex-grow">

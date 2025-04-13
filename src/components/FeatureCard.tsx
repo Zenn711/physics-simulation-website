@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from './ui/card';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
+import { ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -12,6 +13,7 @@ interface FeatureCardProps {
   className?: string;
   category?: string;
   position?: 'left' | 'right';
+  color?: string;
 }
 
 const FeatureCard = ({ 
@@ -21,55 +23,90 @@ const FeatureCard = ({
   delay = 0, 
   className,
   category = "Feature",
-  position = 'left'
+  position = 'left',
+  color = "from-neon-blue to-neon-cyan"
 }: FeatureCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
   return (
     <div 
       className={cn(
-        "w-full mb-12 md:mb-20 relative",
-        position === 'right' ? 'md:ml-auto' : 'md:mr-auto',
+        "w-full my-20 relative",
+        position === 'left' ? 'ml-0 md:mr-auto md:pr-8' : 'mr-0 md:ml-auto md:pl-8',
         className
       )}
       style={{ animationDelay: `${delay}ms` }}
     >
-      <Card className={cn(
-        "glass-card border-none overflow-hidden transition-all duration-500",
-        "hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1",
-        position === 'right' ? 'md:ml-auto' : 'md:mr-auto',
-        "bg-gradient-to-br from-white/10 to-white/5 dark:from-gray-900/30 dark:to-gray-900/10"
-      )}>
-        <CardContent className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start relative overflow-hidden">
+      <Card 
+        className={cn(
+          "feature-card-inner backdrop-blur-lg overflow-hidden transition-all duration-500",
+          "border border-white/10 hover:border-white/20",
+          position === 'right' ? 'md:ml-auto' : 'md:mr-auto',
+          "bg-white/5 dark:bg-gray-900/20",
+          "w-full md:w-[calc(100%-40px)]", 
+          "transform hover:-translate-y-2 hover:shadow-[0_10px_40px_-15px_rgba(6,182,212,0.25)]",
+        )}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <CardContent className="p-8 flex flex-col md:flex-row gap-6 items-start relative overflow-hidden">
           {/* Left position icon styling */}
           {position === 'left' && (
-            <div className="text-neon-blue dark:text-neon-cyan text-4xl md:text-5xl relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/20 to-neon-cyan/20 blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-700 rounded-full"></div>
-              <div className="relative z-10 transform transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3">
+            <div className="feature-icon-container">
+              <div className={`feature-icon-glow bg-gradient-to-r ${color}`}></div>
+              <div className="feature-icon-wrapper">
                 {icon}
               </div>
             </div>
           )}
           
           <div className={cn(
-            "flex-1",
+            "flex-1 z-10",
             position === 'right' ? 'text-right' : 'text-left'
           )}>
-            <div className="uppercase text-xs font-medium tracking-wider text-neon-blue dark:text-neon-cyan mb-1 opacity-80">{category}</div>
-            <h3 className="text-xl md:text-2xl font-bold mb-3 text-text-primary dark:text-white">{title}</h3>
-            <p className="text-text-secondary dark:text-gray-300">{description}</p>
+            <div className={`uppercase text-xs font-medium tracking-widest mb-1 bg-gradient-to-r ${color} bg-clip-text text-transparent`}>{category}</div>
+            <h3 className="text-xl md:text-2xl font-bold mb-3 text-white">{title}</h3>
+            <p className="text-white/70 mb-4">{description}</p>
+            
+            <Link 
+              to="/simulation" 
+              className={cn(
+                "inline-flex items-center text-sm font-medium",
+                "text-white/70 hover:text-white",
+                "transition-all duration-300 group",
+                position === 'right' ? 'flex-row-reverse' : 'flex-row'
+              )}
+            >
+              Learn more 
+              <ChevronRight 
+                size={16} 
+                className={cn(
+                  "transition-transform duration-300",
+                  position === 'right' ? 'mr-1 group-hover:-translate-x-1' : 'ml-1 group-hover:translate-x-1'
+                )}
+              />
+            </Link>
           </div>
           
           {/* Right position icon styling */}
           {position === 'right' && (
-            <div className="text-neon-blue dark:text-neon-cyan text-4xl md:text-5xl relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/20 to-neon-cyan/20 blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-700 rounded-full"></div>
-              <div className="relative z-10 transform transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3">
+            <div className="feature-icon-container">
+              <div className={`feature-icon-glow bg-gradient-to-r ${color}`}></div>
+              <div className="feature-icon-wrapper">
                 {icon}
               </div>
             </div>
           )}
           
-          {/* Decorative element */}
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-neon-blue to-neon-cyan opacity-30"></div>
+          {/* Background accent */}
+          <div 
+            className={`absolute ${position === 'left' ? '-left-20' : '-right-20'} ${isHovered ? 'opacity-20' : 'opacity-10'} -z-10 transition-opacity duration-500 w-64 h-64 rounded-full bg-gradient-to-r ${color} blur-2xl`}
+          ></div>
+          
+          {/* Line accent */}
+          <div 
+            className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r ${color} transition-all duration-700 ease-out ${isHovered ? 'w-full' : 'w-12'}`}
+          ></div>
         </CardContent>
       </Card>
     </div>

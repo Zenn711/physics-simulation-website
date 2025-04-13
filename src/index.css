@@ -69,6 +69,183 @@
   }
 }
 
+/* Stars animation */
+.stars-container {
+  perspective: 1000px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  animation: twinkle 5s ease-in-out infinite;
+  box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Feature Cards */
+.feature-card {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.feature-card-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feature-card-inner {
+  position: relative;
+}
+
+/* Orbiting particles animation */
+@keyframes orbit-particle {
+  0% {
+    transform: rotate(0deg) translateX(var(--orbit-size, 120px)) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(var(--orbit-size, 120px)) rotate(-360deg);
+  }
+}
+
+.animate-orbit-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 0;
+  animation: orbit-particle var(--orbit-duration, 8s) linear infinite;
+  animation-delay: var(--orbit-delay, 0s);
+  opacity: 0.6;
+  box-shadow: 0 0 10px 2px rgba(6, 182, 212, 0.4);
+}
+
+/* Feature icon styling */
+.feature-icon-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.feature-icon-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 20%;
+  opacity: 0.2;
+  filter: blur(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.feature-card-inner:hover .feature-icon-glow {
+  opacity: 0.4;
+  transform: scale(1.2);
+}
+
+.feature-icon-wrapper {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.5s ease;
+}
+
+.feature-card-inner:hover .feature-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  color: white;
+  transition: filter 0.5s ease;
+}
+
+.feature-card-inner:hover .feature-icon {
+  filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
+}
+
+/* Staggered animation for hero section */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: stagger-fade-in 0.6s ease-out forwards;
+}
+
+.reveal-stagger > *:nth-child(1) { animation-delay: 100ms; }
+.reveal-stagger > *:nth-child(2) { animation-delay: 200ms; }
+.reveal-stagger > *:nth-child(3) { animation-delay: 300ms; }
+.reveal-stagger > *:nth-child(4) { animation-delay: 400ms; }
+.reveal-stagger > *:nth-child(5) { animation-delay: 500ms; }
+
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Glowing button effect */
+.glow-button {
+  overflow: hidden;
+  position: relative;
+}
+
+.glow-button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(6, 182, 212, 0) 0%,
+    rgba(6, 182, 212, 0.3) 50%,
+    rgba(6, 182, 212, 0) 100%
+  );
+  transform: rotate(45deg);
+  animation: glow-sweep 3s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glow-button:hover::before {
+  opacity: 1;
+}
+
+@keyframes glow-sweep {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.glow-on-hover:hover {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+}
+
 /* Particle animations */
 .particles {
   position: fixed;

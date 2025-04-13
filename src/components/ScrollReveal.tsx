@@ -24,7 +24,9 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setTimeout(() => {
-              entry.target.classList.add('animated');
+              if (entry.target instanceof HTMLElement) {
+                entry.target.classList.add('animated');
+              }
             }, delay);
             observer.unobserve(entry.target);
           }
@@ -51,10 +53,10 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       ref={elementRef} 
       className={`opacity-0 ${className}`}
       style={{
-        transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
-        transform: animation === 'fade-in' ? 'translateY(20px)' : 
-                  animation === 'slide-in' ? 'translateX(-20px)' : 
-                  animation === 'scale-in' ? 'scale(0.95)' : 'none'
+        transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+        transform: animation === 'fade-in' ? 'translateY(30px)' : 
+                  animation === 'slide-in' ? 'translateX(-30px)' : 
+                  animation === 'scale-in' ? 'scale(0.92)' : 'none'
       }}
       data-animation={animation}
     >
