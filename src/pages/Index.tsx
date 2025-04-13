@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SimulationTabs from '@/components/SimulationTabs';
 import Header from '@/components/Header';
@@ -13,23 +13,10 @@ const Index = () => {
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-    
-    // This is a workaround for a potential error in ProjectileSimulation.tsx
-    // It ensures any functions expecting arguments won't break the app
-    const handlePotentialErrors = () => {
-      window.addEventListener('error', (e) => {
-        if (e.message.includes('Expected 1-3 arguments, but got 0')) {
-          console.warn('Caught an error related to missing arguments. Applied fallback handling.');
-          e.preventDefault();
-        }
-      });
-    };
-    
-    handlePotentialErrors();
   }, []);
   
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-black to-gray-900 text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
       <Header />
       
       <main className="flex-1 pt-20">
