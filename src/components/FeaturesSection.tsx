@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { 
   Compass, 
@@ -8,7 +7,7 @@ import {
   Zap,
   ArrowRight,
   Orbit,
-  Waveform
+  Waves
 } from 'lucide-react';
 import FeatureCard from './FeatureCard';
 import ScrollReveal from './ScrollReveal';
@@ -40,7 +39,7 @@ const FeaturesSection = () => {
       color: "from-neon-purple to-neon-cyan"
     },
     {
-      icon: <Waveform className="feature-icon" />,
+      icon: <Waves className="feature-icon" />,
       title: "Wave Propagation",
       description: "Visualize how waves travel through a medium and experiment with amplitude, frequency, and damping effects.",
       category: "Waves",
