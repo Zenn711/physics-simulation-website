@@ -57,13 +57,17 @@ function ProjectileSimulation() {
         }
     };
     
-    // Handle parameter changes
+    // Handle parameter changes - Fix the function calls here
     const handleAngleChange = (newValue) => {
-        setParams(prev => ({ ...prev, angle: newValue[0] }));
+        if (Array.isArray(newValue) && newValue.length > 0) {
+            setParams(prev => ({ ...prev, angle: newValue[0] }));
+        }
     };
     
     const handleVelocityChange = (newValue) => {
-        setParams(prev => ({ ...prev, velocity: newValue[0] }));
+        if (Array.isArray(newValue) && newValue.length > 0) {
+            setParams(prev => ({ ...prev, velocity: newValue[0] }));
+        }
     };
     
     // Toggle simulation state
