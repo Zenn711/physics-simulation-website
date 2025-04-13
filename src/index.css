@@ -115,6 +115,59 @@
   .story-link {
     @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
   }
+
+  /* NFT-style glows and glassmorphism */
+  .glass-card {
+    @apply backdrop-blur-md bg-white/10 dark:bg-gray-900/30 border border-white/20 dark:border-white/10;
+  }
+
+  .neon-glow {
+    @apply relative;
+  }
+
+  .neon-glow::before {
+    content: '';
+    @apply absolute inset-0 rounded-lg bg-gradient-to-r from-neon-purple/30 to-neon-cyan/30 blur-lg -z-10 opacity-75;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-neon-purple to-neon-cyan;
+  }
+
+  .text-gradient-reverse {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-purple;
+  }
+
+  .gradient-border {
+    position: relative;
+    border-radius: 0.75rem;
+  }
+
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    background: linear-gradient(45deg, var(--tw-gradient-from), var(--tw-gradient-to));
+    border-radius: 0.85rem;
+    opacity: 0.7;
+  }
+
+  /* Parallax effect */
+  .parallax {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+
+  .parallax-layer {
+    transform: translateZ(0);
+    transition: transform 0.2s ease-out;
+  }
+
+  .layer-0 { transform: translateZ(0); }
+  .layer-1 { transform: translateZ(50px); }
+  .layer-2 { transform: translateZ(100px); }
+  .layer-3 { transform: translateZ(150px); }
 }
 
 /* Animations */
@@ -123,6 +176,20 @@
   50% { opacity: 0.3; }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
 .dark .particle {
   box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.orbital {
+  animation: rotate 20s linear infinite;
 }
