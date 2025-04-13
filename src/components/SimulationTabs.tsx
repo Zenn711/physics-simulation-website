@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProjectileSimulation from './ProjectileSimulation';
 import PendulumSimulation from './PendulumSimulation';
 import SpringSimulation from './SpringSimulation';
+import WavePropagationSimulation from './WavePropagationSimulation';
 
 const SimulationTabs = ({ defaultTab = 'projectile' }) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
@@ -41,6 +42,12 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
           >
             Spring Force
           </TabsTrigger>
+          <TabsTrigger
+            value="wave"
+            className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none"
+          >
+            Wave Propagation
+          </TabsTrigger>
         </TabsList>
       </div>
 
@@ -54,6 +61,10 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
       
       <TabsContent value="spring" className="mt-0">
         <SpringSimulation />
+      </TabsContent>
+      
+      <TabsContent value="wave" className="mt-0">
+        <WavePropagationSimulation />
       </TabsContent>
     </Tabs>
   );

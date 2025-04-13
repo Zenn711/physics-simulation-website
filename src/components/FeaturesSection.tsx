@@ -7,7 +7,8 @@ import {
   Box, 
   Zap,
   ArrowRight,
-  Orbit
+  Orbit,
+  Waveform
 } from 'lucide-react';
 import FeatureCard from './FeatureCard';
 import ScrollReveal from './ScrollReveal';
@@ -39,20 +40,28 @@ const FeaturesSection = () => {
       color: "from-neon-purple to-neon-cyan"
     },
     {
-      icon: <Atom className="feature-icon" />,
-      title: "Interactive Learning",
-      description: "Adjust parameters and see immediate results, making abstract concepts concrete and tangible.",
-      category: "Education",
+      icon: <Waveform className="feature-icon" />,
+      title: "Wave Propagation",
+      description: "Visualize how waves travel through a medium and experiment with amplitude, frequency, and damping effects.",
+      category: "Waves",
       position: 'right' as const,
       color: "from-neon-cyan to-neon-blue"
     },
     {
-      icon: <Orbit className="feature-icon" />,
-      title: "Advanced Simulations",
-      description: "Coming soon: wave propagation, fluid dynamics, and electromagnetism visualizations.",
-      category: "Coming Soon",
+      icon: <Atom className="feature-icon" />,
+      title: "Interactive Learning",
+      description: "Adjust parameters and see immediate results, making abstract concepts concrete and tangible.",
+      category: "Education",
       position: 'left' as const,
       color: "from-neon-blue to-neon-purple"
+    },
+    {
+      icon: <Orbit className="feature-icon" />,
+      title: "Advanced Simulations",
+      description: "Coming soon: fluid dynamics and electromagnetism visualizations.",
+      category: "Coming Soon",
+      position: 'right' as const,
+      color: "from-neon-purple to-neon-cyan"
     }
   ];
 
