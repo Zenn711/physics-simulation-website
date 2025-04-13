@@ -118,7 +118,7 @@
 
   /* NFT-style glows and glassmorphism */
   .glass-card {
-    @apply backdrop-blur-md bg-white/10 dark:bg-gray-900/30 border border-white/20 dark:border-white/10;
+    @apply backdrop-blur-md bg-white/5 dark:bg-gray-900/30 border border-white/20 dark:border-white/10;
   }
 
   .neon-glow {
@@ -159,9 +159,49 @@
     perspective: 1000px;
   }
 
+  .perspective-800 {
+    perspective: 800px;
+  }
+
   .parallax-layer {
     transform: translateZ(0);
     transition: transform 0.2s ease-out;
+  }
+  
+  .rotate-y-10 {
+    transform: rotateY(10deg);
+  }
+  
+  .rotate-y-20 {
+    transform: rotateY(20deg);
+  }
+  
+  .-rotate-y-15 {
+    transform: rotateY(-15deg);
+  }
+  
+  .rotate-x-5 {
+    transform: rotateX(5deg);
+  }
+  
+  .rotate-x-10 {
+    transform: rotateX(10deg);
+  }
+  
+  .-rotate-x-5 {
+    transform: rotateX(-5deg);
+  }
+  
+  .translate-z-5 {
+    transform: translateZ(5px);
+  }
+  
+  .translate-z-10 {
+    transform: translateZ(10px);
+  }
+  
+  .translate-z-20 {
+    transform: translateZ(20px);
   }
 
   .layer-0 { transform: translateZ(0); }
