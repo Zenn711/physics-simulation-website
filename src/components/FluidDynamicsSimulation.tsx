@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RefreshCw, HelpCircle, MoveHorizontal, Droplet, Wind, Grid3X3 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tooltip } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const FluidDynamicsSimulation = () => {
   // Simulation parameters
@@ -48,6 +52,7 @@ const FluidDynamicsSimulation = () => {
     setIsRunning(false);
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
     }
     initializeParticles();
     
@@ -184,6 +189,12 @@ const FluidDynamicsSimulation = () => {
         // Move the particle slightly outside the obstacle
         p.x = obstacleX + (obstacleRadius + 5) * nx;
         p.y = obstacleY + (obstacleRadius + 5) * ny;
+        
+        // Add some random variation in turbulent mode
+        if (simulationType === 'turbulent') {
+          p.vx += (Math.random() - 0.5) * 0.5;
+          p.vy += (Math.random() - 0.5) * 0.5;
+        }
       } else {
         // Apply flow field and viscosity effects
         if (simulationType === 'laminar') {
@@ -199,7 +210,7 @@ const FluidDynamicsSimulation = () => {
           p.vx *= 0.99; // Slow down over time
         }
         
-        // Apply viscosity
+        // Apply viscosity - now affects velocity directly
         p.vx *= (1 - params.viscosity * 0.01);
         p.vy *= (1 - params.viscosity * 0.01);
         
@@ -207,9 +218,14 @@ const FluidDynamicsSimulation = () => {
         p.x += p.vx;
         p.y += p.vy;
         
-        // Boundaries check
+        // Boundaries check - improved to ensure continuous flow
         if (p.x < 0) p.x = 0;
-        if (p.x > canvas.width) p.x = 0; // Reset to left side
+        if (p.x > canvas.width) {
+          // Reset to left side with new random position
+          p.x = Math.random() * (canvas.width / 10);
+          p.y = Math.random() * canvas.height;
+          p.age = 0; // Reset age to extend lifetime
+        }
         if (p.y < 0) {
           p.y = 0;
           p.vy = -p.vy * 0.5; // Bounce
@@ -239,13 +255,193 @@ const FluidDynamicsSimulation = () => {
     const obstacleY = canvas.height / 2;
     const obstacleRadius = params.obstacleSize / 2;
     
+    // Draw flow field (streamlines) before the obstacle
+    if (isRunning) {
+      const gridSize = 20;
+      const arrowLength = 10 * params.flowSpeed;
+      
+      for (let x = 20; x < canvas.width; x += gridSize) {
+        for (let y = 20; y < canvas.height; y += gridSize) {
+          // Calculate distance to obstacle
+          const dx = x - obstacleX;
+          const dy = y - obstacleY;
+          const distToObstacle = Math.sqrt(dx * dx + dy * dy);
+          
+          // Skip drawing streamlines inside or very close to obstacle
+          if (distToObstacle < obstacleRadius + 10) continue;
+          
+          // Calculate flow direction (simplified potential flow around circle)
+          let vx = params.flowSpeed;
+          let vy = 0;
+          
+          // Disturb flow around obstacle
+          if (distToObstacle < obstacleRadius * 3) {
+            // Add deviation around the obstacle
+            const influence = Math.max(0, 1 - distToObstacle / (obstacleRadius * 3));
+            const nx = dx / distToObstacle;
+            const ny = dy / distToObstacle;
+            
+            if (x < obstacleX) {
+              // Flow approaching obstacle
+              vx -= vx * influence * 0.5;
+              vy += ny * params.flowSpeed * influence * (dy < 0 ? -1 : 1);
+            } else {
+              // Flow after obstacle - add some wake effects
+              vx = vx * (1 - influence * 0.3);
+              vy += ny * params.flowSpeed * influence * 0.5 * (dy < 0 ? -1 : 1);
+              
+              // Add turbulence in wake if turbulent mode
+              if (simulationType === 'turbulent') {
+                vx += (Math.random() - 0.5) * influence * 0.4;
+                vy += (Math.random() - 0.5) * influence * 0.4;
+              }
+            }
+          }
+          
+          // Normalize vector
+          const mag = Math.sqrt(vx * vx + vy * vy);
+          if (mag > 0) {
+            vx = vx / mag * arrowLength;
+            vy = vy / mag * arrowLength;
+          }
+          
+          // Draw streamline
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + vx, y + vy);
+          
+          // Different colors based on speed
+          const speed = Math.sqrt(vx * vx + vy * vy);
+          const normalizedSpeed = speed / arrowLength;
+          
+          let alpha = 0.2;
+          if (simulationType === 'turbulent') alpha = 0.15;
+          
+          let hue;
+          if (simulationType === 'diffusion') {
+            hue = 180; // Cyan for diffusion
+          } else {
+            hue = 220 - normalizedSpeed * 40; // Blue to purple based on speed
+          }
+          
+          ctx.strokeStyle = `hsla(${hue}, 80%, 50%, ${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+          
+          // Draw arrow tip
+          const arrowSize = 2;
+          const angle = Math.atan2(vy, vx);
+          ctx.beginPath();
+          ctx.moveTo(x + vx, y + vy);
+          ctx.lineTo(
+            x + vx - arrowSize * Math.cos(angle - Math.PI / 6),
+            y + vy - arrowSize * Math.sin(angle - Math.PI / 6)
+          );
+          ctx.lineTo(
+            x + vx - arrowSize * Math.cos(angle + Math.PI / 6),
+            y + vy - arrowSize * Math.sin(angle + Math.PI / 6)
+          );
+          ctx.closePath();
+          ctx.fillStyle = `hsla(${hue}, 80%, 50%, ${alpha})`;
+          ctx.fill();
+        }
+      }
+    }
+    
+    // Draw obstacle with gradient to show pressure
+    const gradientRadius = obstacleRadius * 1.5;
+    const gradient = ctx.createRadialGradient(
+      obstacleX - obstacleRadius * 0.3, obstacleY - obstacleRadius * 0.3,
+      0,
+      obstacleX, obstacleY,
+      gradientRadius
+    );
+    
+    if (simulationType === 'diffusion') {
+      gradient.addColorStop(0, '#666');
+      gradient.addColorStop(1, '#444');
+    } else {
+      // Show pressure gradient on obstacle
+      const highPressure = `hsla(${simulationType === 'turbulent' ? 0 : 210}, 80%, 40%, 0.9)`;
+      const lowPressure = `hsla(${simulationType === 'turbulent' ? 260 : 190}, 70%, 50%, 0.7)`;
+      
+      gradient.addColorStop(0, highPressure); // High pressure (front)
+      gradient.addColorStop(1, lowPressure);  // Low pressure (back)
+    }
+    
     ctx.beginPath();
     ctx.arc(obstacleX, obstacleY, obstacleRadius, 0, Math.PI * 2);
-    ctx.fillStyle = simulationType === 'diffusion' ? '#444' : '#555';
+    ctx.fillStyle = gradient;
     ctx.fill();
     ctx.strokeStyle = '#888';
     ctx.lineWidth = 1;
     ctx.stroke();
+    
+    // Draw pressure zones around obstacle
+    if (simulationType !== 'diffusion' && isRunning) {
+      // High pressure zone in front
+      const frontGradient = ctx.createRadialGradient(
+        obstacleX - obstacleRadius, obstacleY,
+        0,
+        obstacleX - obstacleRadius, obstacleY,
+        obstacleRadius * 1.2
+      );
+      frontGradient.addColorStop(0, `rgba(30, 144, 255, ${0.2 * params.flowSpeed})`);
+      frontGradient.addColorStop(1, 'rgba(30, 144, 255, 0)');
+      
+      ctx.beginPath();
+      ctx.arc(obstacleX - obstacleRadius, obstacleY, obstacleRadius * 1.2, 0, Math.PI * 2);
+      ctx.fillStyle = frontGradient;
+      ctx.fill();
+      
+      // Low pressure zone behind
+      const backGradient = ctx.createRadialGradient(
+        obstacleX + obstacleRadius * 1.5, obstacleY,
+        0,
+        obstacleX + obstacleRadius * 1.5, obstacleY,
+        obstacleRadius * 2
+      );
+      backGradient.addColorStop(0, `rgba(138, 43, 226, ${0.15 * params.flowSpeed})`);
+      backGradient.addColorStop(1, 'rgba(138, 43, 226, 0)');
+      
+      ctx.beginPath();
+      ctx.arc(obstacleX + obstacleRadius * 1.5, obstacleY, obstacleRadius * 2, 0, Math.PI * 2);
+      ctx.fillStyle = backGradient;
+      ctx.fill();
+      
+      // Add vortices in wake for turbulent flow
+      if (simulationType === 'turbulent') {
+        for (let i = 1; i <= 3; i++) {
+          const vortexX = obstacleX + obstacleRadius * (1 + i * 0.7);
+          const upperY = obstacleY - obstacleRadius * 0.5 * i;
+          const lowerY = obstacleY + obstacleRadius * 0.5 * i;
+          
+          const vortexGradient1 = ctx.createRadialGradient(
+            vortexX, upperY, 0,
+            vortexX, upperY, obstacleRadius * 0.4
+          );
+          vortexGradient1.addColorStop(0, `rgba(255, 100, 100, ${0.2 * params.flowSpeed})`);
+          vortexGradient1.addColorStop(1, 'rgba(255, 100, 100, 0)');
+          
+          ctx.beginPath();
+          ctx.arc(vortexX, upperY, obstacleRadius * 0.4, 0, Math.PI * 2);
+          ctx.fillStyle = vortexGradient1;
+          ctx.fill();
+          
+          const vortexGradient2 = ctx.createRadialGradient(
+            vortexX, lowerY, 0,
+            vortexX, lowerY, obstacleRadius * 0.4
+          );
+          vortexGradient2.addColorStop(0, `rgba(100, 100, 255, ${0.2 * params.flowSpeed})`);
+          vortexGradient2.addColorStop(1, 'rgba(100, 100, 255, 0)');
+          
+          ctx.beginPath();
+          ctx.arc(vortexX, lowerY, obstacleRadius * 0.4, 0, Math.PI * 2);
+          ctx.fillStyle = vortexGradient2;
+          ctx.fill();
+        }
+      }
+    }
     
     // Draw particles
     const particles = particlesRef.current;
@@ -269,12 +465,19 @@ const FluidDynamicsSimulation = () => {
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(p.x - p.vx * 3, p.y - p.vy * 3);
         
-        const hue = simulationType === 'laminar' ? 
-          200 + (20 * (p.y / canvas.height)) :  // Blue with slight variation
-          (p.hue + p.age * 0.2) % 360;         // Changing hue for turbulent
+        // Determine color based on speed
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        const normalizedSpeed = Math.min(1, speed / (params.flowSpeed * 1.5));
         
-        ctx.strokeStyle = `hsla(${hue}, 80%, 50%, ${alpha})`;
-        ctx.lineWidth = 1.5;
+        const hue = simulationType === 'laminar' ? 
+          220 - normalizedSpeed * 40 : // Blue to purple gradient for laminar
+          (220 - normalizedSpeed * 120) % 360; // Wider color range for turbulent
+        
+        const saturation = simulationType === 'laminar' ? 80 : 70;
+        const lightness = 50 + normalizedSpeed * 10;
+        
+        ctx.strokeStyle = `hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha})`;
+        ctx.lineWidth = 1.5 + normalizedSpeed;
         ctx.stroke();
       }
     }
@@ -317,7 +520,7 @@ const FluidDynamicsSimulation = () => {
   
   // Handle simulation type change
   useEffect(() => {
-    initializeParticles();
+    resetSimulation();
   }, [simulationType]);
   
   // Start/stop animation when isRunning changes
@@ -335,9 +538,15 @@ const FluidDynamicsSimulation = () => {
     }
   }, [isRunning]);
   
-  // Update when parameters change
+  // Update when parameters change - now we immediately reinitialize particles when needed
   useEffect(() => {
-    drawScene();
+    // If changing particle density, need to reinitialize
+    if (particlesRef.current.length !== params.particleDensity) {
+      initializeParticles();
+    } else {
+      // Otherwise just update the scene
+      drawScene();
+    }
   }, [params]);
   
   // Parameter change handlers
@@ -347,11 +556,18 @@ const FluidDynamicsSimulation = () => {
   
   const handleFlowSpeedChange = (newValue: number[]) => {
     setParams(prev => ({ ...prev, flowSpeed: newValue[0] }));
+    
+    // Update existing particles' velocity for immediate effect
+    if (particlesRef.current.length > 0) {
+      const speedRatio = newValue[0] / params.flowSpeed;
+      particlesRef.current.forEach(p => {
+        p.vx *= speedRatio;
+      });
+    }
   };
   
   const handleParticleDensityChange = (newValue: number[]) => {
     setParams(prev => ({ ...prev, particleDensity: newValue[0] }));
-    initializeParticles();
   };
   
   const handleObstacleSizeChange = (newValue: number[]) => {
@@ -383,9 +599,18 @@ const FluidDynamicsSimulation = () => {
         <div className="flex items-center space-x-2">
           <span>{icon}</span>
           <span>{label}</span>
-          <Tooltip content={tooltip}>
-            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
         <span className="font-mono">{value.toFixed(2)}</span>
       </div>
@@ -536,7 +761,7 @@ const FluidDynamicsSimulation = () => {
                   <h4 className="text-sm font-medium">Flow Visualization</h4>
                   <p className="text-xs text-muted-foreground mt-1">
                     Each colored streak represents a particle in the fluid. Watch how they interact with the obstacle
-                    and form patterns based on the flow regime.
+                    and form patterns based on the flow regime. Pressure gradients appear as color variations.
                   </p>
                 </div>
               </div>
