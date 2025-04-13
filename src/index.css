@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -90,9 +91,8 @@
     @apply text-text-secondary dark:text-gray-300 font-body;
   }
 
-  .font-display {
-    @apply font-display;
-  }
+  /* Removed the circular dependency by removing this class entirely.
+     The font-display utility from Tailwind can be used directly instead */
 }
 
 /* Stars animation */
