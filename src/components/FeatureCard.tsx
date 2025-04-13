@@ -12,7 +12,7 @@ interface FeatureCardProps {
   delay?: number;
   className?: string;
   category?: string;
-  position?: 'left' | 'center' | 'right';
+  position?: 'left' | 'right';
   color?: string;
 }
 
@@ -31,10 +31,8 @@ const FeatureCard = ({
   return (
     <div 
       className={cn(
-        "w-full relative h-full",
-        position === 'left' ? 'ml-0 md:mr-auto' : 
-        position === 'right' ? 'mr-0 md:ml-auto' : 
-        'mx-auto',
+        "w-full my-20 relative",
+        position === 'left' ? 'ml-0 md:mr-auto md:pr-8' : 'mr-0 md:ml-auto md:pl-8',
         className
       )}
       style={{ animationDelay: `${delay}ms` }}
@@ -43,16 +41,17 @@ const FeatureCard = ({
         className={cn(
           "feature-card-inner backdrop-blur-lg overflow-hidden transition-all duration-500",
           "border border-white/10 hover:border-white/20",
+          position === 'right' ? 'md:ml-auto' : 'md:mr-auto',
           "bg-white/5 dark:bg-gray-900/20",
-          "w-full h-full", 
+          "w-full md:w-[calc(100%-40px)]", 
           "transform hover:-translate-y-2 hover:shadow-[0_10px_40px_-15px_rgba(6,182,212,0.25)]",
         )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <CardContent className="p-5 flex flex-row gap-4 items-start relative overflow-hidden h-full">
+        <CardContent className="p-8 flex flex-col md:flex-row gap-6 items-start relative overflow-hidden">
           {/* Left position icon styling */}
-          {(position === 'left' || position === 'center') && (
+          {position === 'left' && (
             <div className="feature-icon-container">
               <div className={`feature-icon-glow bg-gradient-to-r ${color}`}></div>
               <div className="feature-icon-wrapper">
@@ -63,13 +62,11 @@ const FeatureCard = ({
           
           <div className={cn(
             "flex-1 z-10",
-            position === 'right' ? 'text-right' : 
-            position === 'center' ? 'text-center' : 
-            'text-left'
+            position === 'right' ? 'text-right' : 'text-left'
           )}>
             <div className={`uppercase text-xs font-medium font-sans tracking-widest mb-1 bg-gradient-to-r ${color} bg-clip-text text-transparent`}>{category}</div>
-            <h3 className="text-lg md:text-xl font-heading font-bold mb-2 text-white">{title}</h3>
-            <p className="text-sm text-white/70 mb-3 font-body">{description}</p>
+            <h3 className="text-xl md:text-2xl font-heading font-bold mb-3 text-white">{title}</h3>
+            <p className="text-white/70 mb-4 font-body">{description}</p>
             
             <Link 
               to="/simulation" 
@@ -77,9 +74,7 @@ const FeatureCard = ({
                 "inline-flex items-center text-sm font-medium font-sans",
                 "text-white/70 hover:text-white",
                 "transition-all duration-300 group",
-                position === 'right' ? 'flex-row-reverse' : 
-                position === 'center' ? 'justify-center' : 
-                'flex-row'
+                position === 'right' ? 'flex-row-reverse' : 'flex-row'
               )}
             >
               Learn more 
@@ -87,9 +82,7 @@ const FeatureCard = ({
                 size={16} 
                 className={cn(
                   "transition-transform duration-300",
-                  position === 'right' ? 'mr-1 group-hover:-translate-x-1' : 
-                  position === 'center' ? 'ml-1 group-hover:translate-x-1' : 
-                  'ml-1 group-hover:translate-x-1'
+                  position === 'right' ? 'mr-1 group-hover:-translate-x-1' : 'ml-1 group-hover:translate-x-1'
                 )}
               />
             </Link>
@@ -107,11 +100,7 @@ const FeatureCard = ({
           
           {/* Background accent */}
           <div 
-            className={`absolute ${
-              position === 'left' ? '-left-20' : 
-              position === 'right' ? '-right-20' : 
-              'left-1/2 -translate-x-1/2'
-            } ${isHovered ? 'opacity-20' : 'opacity-10'} -z-10 transition-opacity duration-500 w-64 h-64 rounded-full bg-gradient-to-r ${color} blur-2xl`}
+            className={`absolute ${position === 'left' ? '-left-20' : '-right-20'} ${isHovered ? 'opacity-20' : 'opacity-10'} -z-10 transition-opacity duration-500 w-64 h-64 rounded-full bg-gradient-to-r ${color} blur-2xl`}
           ></div>
           
           {/* Line accent */}

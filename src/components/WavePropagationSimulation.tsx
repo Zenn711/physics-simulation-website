@@ -6,7 +6,6 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { PlayCircle, PauseCircle, RotateCcw, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Input } from '@/components/ui/input';
 
 const WavePropagationSimulation = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -33,7 +32,7 @@ const WavePropagationSimulation = () => {
       
       const oscillator = audioContextRef.current.createOscillator();
       oscillator.type = 'sine';
-      oscillator.frequency.value = Math.min(220 * frequency, 1000); // Base frequency with limit
+      oscillator.frequency.value = 220 * frequency; // Base frequency
       oscillator.connect(gainNode);
       oscillator.start();
       oscillatorRef.current = oscillator;
@@ -52,8 +51,7 @@ const WavePropagationSimulation = () => {
   // Update oscillator frequency when frequency changes
   useEffect(() => {
     if (oscillatorRef.current) {
-      // Cap the audio frequency to avoid very high pitched sounds
-      oscillatorRef.current.frequency.value = Math.min(220 * frequency, 1000);
+      oscillatorRef.current.frequency.value = 220 * frequency;
     }
   }, [frequency]);
 
@@ -97,7 +95,7 @@ const WavePropagationSimulation = () => {
     ctx.lineWidth = 3;
     ctx.strokeStyle = 'hsl(var(--primary))';
     
-    const segments = Math.min(200, Math.max(100, frequency * 50)); // Adaptive segments based on frequency
+    const segments = 100;
     const segmentWidth = canvas.width / segments;
     
     for (let i = 0; i <= segments; i++) {
@@ -115,8 +113,8 @@ const WavePropagationSimulation = () => {
     
     ctx.stroke();
     
-    // Draw particles on the wave (fewer at higher frequencies)
-    const particleCount = Math.max(6, Math.min(12, 20 / frequency));
+    // Draw particles on the wave
+    const particleCount = 12;
     const particleSpacing = canvas.width / particleCount;
     
     for (let i = 0; i < particleCount; i++) {
@@ -143,84 +141,6 @@ const WavePropagationSimulation = () => {
     }
   };
   
-  // Re-render the wave even when not playing (for parameter changes)
-  const renderStatic = () => {
-    if (!canvasRef.current) return;
-    
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    const centerY = canvas.height / 2;
-    const maxAmplitude = (amplitude / 100) * centerY * 0.8;
-    
-    // Draw axes
-    ctx.strokeStyle = '#666';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, centerY);
-    ctx.lineTo(canvas.width, centerY);
-    ctx.stroke();
-    
-    // Draw wave
-    ctx.beginPath();
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = 'hsl(var(--primary))';
-    
-    const segments = Math.min(200, Math.max(100, frequency * 50));
-    const segmentWidth = canvas.width / segments;
-    
-    for (let i = 0; i <= segments; i++) {
-      const x = i * segmentWidth;
-      const wavePos = x / canvas.width;
-      const dampingFactor = Math.exp(-damping * wavePos * 0.5);
-      const y = centerY - maxAmplitude * Math.sin(frequency * 10 * wavePos * Math.PI) * dampingFactor;
-      
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    }
-    
-    ctx.stroke();
-    
-    // Draw particles on the wave
-    const particleCount = Math.max(6, Math.min(12, 20 / frequency));
-    const particleSpacing = canvas.width / particleCount;
-    
-    for (let i = 0; i < particleCount; i++) {
-      const x = i * particleSpacing;
-      const wavePos = x / canvas.width;
-      const dampingFactor = Math.exp(-damping * wavePos * 0.5);
-      const y = centerY - maxAmplitude * Math.sin(frequency * 10 * wavePos * Math.PI) * dampingFactor;
-      
-      ctx.beginPath();
-      ctx.fillStyle = 'hsl(var(--primary))';
-      ctx.arc(x, y, 6, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Add glow effect
-      ctx.beginPath();
-      ctx.arc(x, y, 8, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.3)';
-      ctx.fill();
-    }
-  };
-  
-  // Update animation when parameters change
-  useEffect(() => {
-    if (isPlaying) {
-      // If animation is already running, it will update automatically
-    } else {
-      // If not playing, render a static update
-      renderStatic();
-    }
-  }, [amplitude, frequency, waveSpeed, damping]);
-  
   // Start/stop animation when isPlaying changes
   useEffect(() => {
     if (isPlaying) {
@@ -228,7 +148,6 @@ const WavePropagationSimulation = () => {
       animationRef.current = requestAnimationFrame(animate);
     } else {
       cancelAnimationFrame(animationRef.current);
-      renderStatic(); // Render static wave when paused
     }
     
     return () => {
@@ -245,13 +164,6 @@ const WavePropagationSimulation = () => {
         if (container) {
           canvas.width = container.clientWidth;
           canvas.height = 400;
-          
-          // Re-render when resized
-          if (isPlaying) {
-            // Animation will update automatically
-          } else {
-            renderStatic();
-          }
         }
       }
     };
@@ -262,7 +174,7 @@ const WavePropagationSimulation = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [isPlaying, amplitude, frequency, waveSpeed, damping]);
+  }, []);
   
   // Reset the simulation
   const handleReset = () => {
@@ -273,40 +185,34 @@ const WavePropagationSimulation = () => {
     setDamping(0);
     
     // Redraw canvas in reset state
-    setTimeout(() => renderStatic(), 50);
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const centerY = canvas.height / 2;
+        
+        // Draw axis
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, centerY);
+        ctx.lineTo(canvas.width, centerY);
+        ctx.stroke();
+        
+        // Draw straight line
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'hsl(var(--primary))';
+        ctx.moveTo(0, centerY);
+        ctx.lineTo(canvas.width, centerY);
+        ctx.stroke();
+      }
+    }
   };
   
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
-  };
-  
-  // Direct input handlers for precise control
-  const handleFrequencyInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (!isNaN(value)) {
-      setFrequency(Math.min(Math.max(0.1, value), 50));
-    }
-  };
-
-  const handleAmplitudeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (!isNaN(value)) {
-      setAmplitude(Math.min(Math.max(0, value), 100));
-    }
-  };
-
-  const handleWaveSpeedInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (!isNaN(value)) {
-      setWaveSpeed(Math.min(Math.max(0.1, value), 10));
-    }
-  };
-
-  const handleDampingInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (!isNaN(value)) {
-      setDamping(Math.min(Math.max(0, value), 1));
-    }
   };
 
   return (
@@ -374,18 +280,7 @@ const WavePropagationSimulation = () => {
                       </TooltipContent>
                     </Tooltip>
                   </Label>
-                  <div className="flex items-center">
-                    <Input 
-                      id="amplitude-input"
-                      type="number"
-                      value={amplitude}
-                      onChange={handleAmplitudeInput}
-                      className="w-16 h-8 text-right mr-2"
-                      min={0}
-                      max={100}
-                    />
-                    <span className="text-sm text-muted-foreground">%</span>
-                  </div>
+                  <span className="text-sm text-muted-foreground">{amplitude}%</span>
                 </div>
                 <Slider
                   id="amplitude"
@@ -394,7 +289,6 @@ const WavePropagationSimulation = () => {
                   min={0}
                   max={100}
                   step={1}
-                  className="cursor-pointer"
                 />
               </div>
               
@@ -407,32 +301,19 @@ const WavePropagationSimulation = () => {
                         <Info className="h-4 w-4 ml-2 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Controls how many waves appear (0.1-50 Hz)</p>
+                        <p>Controls how many waves appear</p>
                       </TooltipContent>
                     </Tooltip>
                   </Label>
-                  <div className="flex items-center">
-                    <Input 
-                      id="frequency-input"
-                      type="number"
-                      value={frequency}
-                      onChange={handleFrequencyInput}
-                      className="w-16 h-8 text-right mr-2"
-                      step={0.1}
-                      min={0.1}
-                      max={50}
-                    />
-                    <span className="text-sm text-muted-foreground">Hz</span>
-                  </div>
+                  <span className="text-sm text-muted-foreground">{frequency.toFixed(1)} Hz</span>
                 </div>
                 <Slider
                   id="frequency"
                   value={[frequency]}
                   onValueChange={(value) => setFrequency(value[0])}
                   min={0.1}
-                  max={50}
+                  max={3}
                   step={0.1}
-                  className="cursor-pointer"
                 />
               </div>
               
@@ -449,28 +330,15 @@ const WavePropagationSimulation = () => {
                       </TooltipContent>
                     </Tooltip>
                   </Label>
-                  <div className="flex items-center">
-                    <Input 
-                      id="waveSpeed-input"
-                      type="number"
-                      value={waveSpeed}
-                      onChange={handleWaveSpeedInput}
-                      className="w-16 h-8 text-right mr-2"
-                      step={0.1}
-                      min={0.1}
-                      max={10}
-                    />
-                    <span className="text-sm text-muted-foreground">×</span>
-                  </div>
+                  <span className="text-sm text-muted-foreground">{waveSpeed.toFixed(1)}x</span>
                 </div>
                 <Slider
                   id="waveSpeed"
                   value={[waveSpeed]}
                   onValueChange={(value) => setWaveSpeed(value[0])}
                   min={0.1}
-                  max={10}
+                  max={5}
                   step={0.1}
-                  className="cursor-pointer"
                 />
               </div>
               
@@ -487,18 +355,7 @@ const WavePropagationSimulation = () => {
                       </TooltipContent>
                     </Tooltip>
                   </Label>
-                  <div className="flex items-center">
-                    <Input 
-                      id="damping-input"
-                      type="number"
-                      value={damping}
-                      onChange={handleDampingInput}
-                      className="w-16 h-8 text-right mr-2"
-                      step={0.01}
-                      min={0}
-                      max={1}
-                    />
-                  </div>
+                  <span className="text-sm text-muted-foreground">{damping.toFixed(2)}</span>
                 </div>
                 <Slider
                   id="damping"
@@ -507,7 +364,6 @@ const WavePropagationSimulation = () => {
                   min={0}
                   max={1}
                   step={0.01}
-                  className="cursor-pointer"
                 />
               </div>
             </div>
