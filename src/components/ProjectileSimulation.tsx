@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Play, Pause, RefreshCw } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,10 @@ function ProjectileSimulation() {
     });
     
     const [isRunning, setIsRunning] = useState(false);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [time, setTime] = useState(0);
+    const [trajectory, setTrajectory] = useState([{ x: 0, y: 0 }]);
+    const [hasLanded, setHasLanded] = useState(false);
     
     // Environment and visual settings
     const [environment, setEnvironment] = useState('earth');
@@ -25,11 +28,33 @@ function ProjectileSimulation() {
     // Visual settings
     const [showTrail, setShowTrail] = useState(true);
     const [autoScale, setAutoScale] = useState(true);
+    const [viewScale, setViewScale] = useState(1);
+    
+    // Canvas properties
+    const width = 600;
+    const height = 300;
+    const basescale = 20; // Base pixels per meter
+    
+    // Animation settings
+    const timeStep = 0.05;
+    const animationSpeed = 30; // ms
+    
+    // Animation reference
+    const animationRef = useRef(null);
+    const maxTrajectoryRef = useRef({ maxX: 0, maxY: 0 });
     
     // Reset simulation
     const resetSimulation = () => {
         setIsRunning(false);
-        // Add reset logic here
+        setTime(0);
+        setPosition({ x: 0, y: 0 });
+        setTrajectory([{ x: 0, y: 0 }]);
+        setHasLanded(false);
+        
+        if (animationRef.current) {
+            clearInterval(animationRef.current);
+            animationRef.current = null;
+        }
     };
     
     // Handle parameter changes
@@ -44,6 +69,155 @@ function ProjectileSimulation() {
     // Toggle simulation state
     const toggleSimulation = () => {
         setIsRunning(!isRunning);
+    };
+    
+    // Calculate maximum trajectory
+    useEffect(() => {
+        if (autoScale) {
+            // Calculate expected range and max height for auto-scaling
+            const angleRad = params.angle * Math.PI / 180;
+            const currGravity = environments[environment].gravity;
+            const maxHeight = (params.velocity * params.velocity * Math.sin(angleRad) * Math.sin(angleRad)) / (2 * currGravity);
+            const range = (params.velocity * params.velocity * Math.sin(2 * angleRad)) / currGravity;
+            
+            maxTrajectoryRef.current = { maxX: range, maxY: maxHeight };
+            
+            // Calculate suitable scale factor to keep trajectory in view
+            const xScale = range > 0 ? (width * 0.8) / (range * basescale) : 1;
+            const yScale = maxHeight > 0 ? (height * 0.8) / (maxHeight * basescale) : 1;
+            
+            // Use the more restrictive scale (smaller value)
+            const newScale = Math.min(xScale, yScale, 1);
+            setViewScale(newScale > 0 ? 1/newScale : 1);
+        }
+    }, [params, environment, basescale, autoScale, width, height, environments]);
+    
+    // Animation logic
+    useEffect(() => {
+        if (!isRunning || hasLanded) return;
+    
+        if (animationRef.current) {
+            clearInterval(animationRef.current);
+        }
+    
+        animationRef.current = setInterval(() => {
+            setTime((prev) => {
+                const newTime = prev + timeStep;
+
+                // Calculate projectile motion with environment effects
+                const angleRad = params.angle * Math.PI / 180;
+                const vx = params.velocity * Math.cos(angleRad);
+                const vy = params.velocity * Math.sin(angleRad);
+                
+                const currGravity = environments[environment].gravity;
+                const airResistance = environments[environment].airResistance;
+                
+                // Apply simple air resistance model
+                const x = vx * newTime * (1 - airResistance * newTime);
+                const y = vy * newTime * (1 - airResistance * newTime) - 0.5 * currGravity * newTime * newTime;
+
+                const newPosition = { x, y };
+                setPosition(newPosition);
+                
+                if (showTrail) {
+                    setTrajectory((prev) => [...prev, newPosition]);
+                }
+
+                // Check if projectile has landed (y <= 0)
+                if (y <= 0) {
+                    setHasLanded(true);
+                    clearInterval(animationRef.current);
+                    
+                    // Calculate landing position
+                    const a = 0.5 * currGravity;
+                    const b = -vy * (1 - airResistance * newTime);
+                    const c = 0;
+                    
+                    const discriminant = b * b - 4 * a * c;
+                    const tLand = (-b - Math.sqrt(discriminant)) / (2 * a);
+                    const xLand = vx * tLand * (1 - airResistance * tLand);
+                    
+                    setPosition({ x: xLand, y: 0 });
+                    return newTime;
+                }
+
+                return newTime;
+            });
+        }, animationSpeed);
+
+        return () => {
+            if (animationRef.current) {
+                clearInterval(animationRef.current);
+            }
+        };
+    }, [isRunning, params, hasLanded, environment, showTrail, environments]);
+    
+    // Convert coordinates to canvas space with auto-scaling
+    const scale = basescale / viewScale;
+    const toCanvasX = (x) => Math.min(width, (x * scale) % (width * 2));
+    const toCanvasY = (y) => height - (y * scale);
+    
+    // Calculate trajectory metrics
+    const angleRad = params.angle * Math.PI / 180;
+    const currGravity = environments[environment].gravity;
+    const maxHeight = (params.velocity * params.velocity * Math.sin(angleRad) * Math.sin(angleRad)) / (2 * currGravity);
+    const range = (params.velocity * params.velocity * Math.sin(2 * angleRad)) / currGravity;
+    
+    // Generate some terrain features
+    const generateTerrain = () => {
+        if (environment === 'earth') {
+            return (
+                <>
+                    <rect x={width - 80} y={height - 30} width="80" height="30" fill="#4b7b2a" />
+                    <rect x={width - 50} y={height - 40} width="30" height="10" fill="#4b7b2a" />
+                    
+                    {/* Trees */}
+                    <circle cx={width - 65} cy={height - 45} r="12" fill="#2d6a1e" />
+                    <circle cx={width - 30} cy={height - 50} r="10" fill="#2d6a1e" />
+                    
+                    {/* Clouds */}
+                    <circle cx={width/4} cy={30} r="12" fill="rgba(255,255,255,0.7)" />
+                    <circle cx={width/4 + 10} cy={25} r="15" fill="rgba(255,255,255,0.7)" />
+                    <circle cx={width/4 + 25} cy={30} r="12" fill="rgba(255,255,255,0.7)" />
+                    
+                    <circle cx={width/2 + 80} cy={50} r="10" fill="rgba(255,255,255,0.7)" />
+                    <circle cx={width/2 + 95} cy={45} r="14" fill="rgba(255,255,255,0.7)" />
+                </>
+            );
+        } else if (environment === 'moon') {
+            return (
+                <>
+                    {/* Craters */}
+                    <circle cx={width - 150} cy={height - 10} r="20" fill="rgba(100,100,100,0.3)" strokeWidth="2" stroke="rgba(80,80,80,0.5)" />
+                    <circle cx={width - 70} cy={height - 5} r="15" fill="rgba(100,100,100,0.3)" strokeWidth="2" stroke="rgba(80,80,80,0.5)" />
+                    <circle cx={width/3} cy={height - 8} r="12" fill="rgba(100,100,100,0.3)" strokeWidth="2" stroke="rgba(80,80,80,0.5)" />
+                    
+                    {/* Stars */}
+                    {Array(20).fill().map((_, i) => (
+                        <circle 
+                            key={i} 
+                            cx={Math.random() * width} 
+                            cy={Math.random() * (height - 50)} 
+                            r={Math.random() * 1.5} 
+                            fill="white" 
+                        />
+                    ))}
+                </>
+            );
+        } else if (environment === 'mars') {
+            return (
+                <>
+                    {/* Mars hills */}
+                    <path d="M0,300 C100,270 200,290 300,280 C400,270 500,290 600,300" fill="#b84c32" />
+                    
+                    {/* Rocks */}
+                    <polygon points="150,290 160,275 170,290" fill="#8c3a26" />
+                    <polygon points="410,290 425,280 430,290" fill="#8c3a26" />
+                    <polygon points="490,290 500,280 510,290" fill="#8c3a26" />
+                </>
+            );
+        }
+        return null;
     };
 
     return (
@@ -72,13 +246,124 @@ function ProjectileSimulation() {
                 </div>
             </div>
             
-            <div className={`relative w-full physics-canvas ${environments[environment].background}`}>
-                {/* Canvas content will be rendered here */}
-                <svg width="100%" height="100%" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
-                    {/* Placeholder for the simulation content */}
-                    <text x="300" y="150" fontSize="16" fill="currentColor" textAnchor="middle">
-                        {isRunning ? "Simulation Running" : "Press Play to Start Simulation"}
+            <div className={`relative w-full physics-canvas ${environments[environment].background} h-64 md:h-80 rounded-lg shadow-lg overflow-hidden`}>
+                <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet" className="mx-auto">
+                    {/* Environment terrain */}
+                    {generateTerrain()}
+                    
+                    {/* Ground line */}
+                    <line 
+                        x1="0" 
+                        y1={height} 
+                        x2={width} 
+                        y2={height} 
+                        stroke={environment === 'moon' ? '#aaa' : '#666'} 
+                        strokeWidth="2" 
+                    />
+
+                    {/* Grid for scale reference */}
+                    {autoScale && viewScale !== 1 && (
+                        <g opacity="0.2">
+                            <text x="10" y="20" fontSize="12" fill="currentColor">
+                                Scale: 1:{viewScale.toFixed(1)}
+                            </text>
+                        </g>
+                    )}
+
+                    {/* Trajectory path */}
+                    {showTrail && trajectory.length > 1 && (
+                        <polyline
+                            points={trajectory.map((p) => {
+                                const canvasX = toCanvasX(p.x);
+                                const canvasY = toCanvasY(Math.max(0, p.y));
+                                // Check if point is within canvas
+                                if (canvasX >= 0 && canvasX <= width && canvasY >= 0 && canvasY <= height) {
+                                    return `${canvasX},${canvasY}`;
+                                }
+                                return '';
+                            }).filter(p => p !== '').join(' ')}
+                            fill="none"
+                            stroke={environment === 'earth' ? "rgba(59, 130, 246, 0.6)" : 
+                                    environment === 'moon' ? "rgba(255, 255, 255, 0.6)" :
+                                    "rgba(220, 38, 38, 0.6)"}
+                            strokeWidth="2"
+                        />
+                    )}
+
+                    {/* Angle indicator */}
+                    <line
+                        x1="0"
+                        y1={height}
+                        x2={60 * Math.cos(angleRad)}
+                        y2={height - 60 * Math.sin(angleRad)}
+                        stroke="rgba(239, 68, 68, 0.7)"
+                        strokeWidth="2"
+                        strokeDasharray="4"
+                    />
+                    <text x="25" y={height - 30} fontSize="14" fill="currentColor" fontWeight="bold">
+                        {params.angle}°
                     </text>
+
+                    {/* Velocity indicator */}
+                    <text x="20" y={height - 10} fontSize="12" fill="currentColor">
+                        v₀ = {params.velocity} m/s
+                    </text>
+
+                    {/* Landing marker - only shown if within canvas */}
+                    {hasLanded && toCanvasX(position.x) <= width && (
+                        <circle
+                            cx={toCanvasX(position.x)}
+                            cy={height}
+                            r="4"
+                            fill="rgba(239, 68, 68, 0.8)"
+                        />
+                    )}
+
+                    {/* Projectile object */}
+                    {toCanvasX(position.x) <= width && toCanvasY(Math.max(0, position.y)) >= 0 && (
+                        <circle
+                            cx={toCanvasX(position.x)}
+                            cy={toCanvasY(Math.max(0, position.y))}
+                            r="8"
+                            fill={environment === 'earth' ? "rgba(239, 68, 68, 1)" : 
+                                environment === 'moon' ? "rgba(200, 200, 200, 1)" : 
+                                "rgba(220, 38, 38, 1)"}
+                            stroke="white"
+                            strokeWidth="1"
+                        >
+                            {/* Add animation pulse effect */}
+                            <animate 
+                                attributeName="opacity" 
+                                values="1;0.7;1" 
+                                dur="1s" 
+                                repeatCount="indefinite" 
+                                begin={isRunning && !hasLanded ? "0s" : "indefinite"}
+                            />
+                        </circle>
+                    )}
+
+                    {/* Height indicator - only if projectile is visible */}
+                    {position.y > 0.5 && toCanvasX(position.x) <= width && (
+                        <>
+                            <line 
+                                x1={toCanvasX(position.x)} 
+                                y1={toCanvasY(position.y)} 
+                                x2={toCanvasX(position.x)} 
+                                y2={height} 
+                                stroke="rgba(107, 114, 128, 0.5)" 
+                                strokeWidth="1" 
+                                strokeDasharray="3"
+                            />
+                            <text 
+                                x={toCanvasX(position.x) + 5} 
+                                y={toCanvasY(position.y / 2)} 
+                                fontSize="12" 
+                                fill="currentColor"
+                            >
+                                {position.y.toFixed(1)}m
+                            </text>
+                        </>
+                    )}
                 </svg>
             </div>
             
@@ -146,12 +431,12 @@ function ProjectileSimulation() {
                                 <p className="text-lg font-bold">{environments[environment].gravity} m/s²</p>
                             </div>
                             <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium">Air Resistance</p>
-                                <p className="text-lg font-bold">{environments[environment].airResistance > 0 ? 'Present' : 'None'}</p>
+                                <p className="text-sm font-medium">Max Height</p>
+                                <p className="text-lg font-bold">{maxHeight.toFixed(2)} m</p>
                             </div>
                             <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium">Status</p>
-                                <p className="text-lg font-bold">{isRunning ? 'Running' : 'Idle'}</p>
+                                <p className="text-sm font-medium">Range</p>
+                                <p className="text-lg font-bold">{range.toFixed(2)} m</p>
                             </div>
                         </div>
                     </CardContent>

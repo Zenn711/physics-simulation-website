@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RefreshCw } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -31,8 +32,8 @@ function PendulumSimulation() {
     const origin = { x: width / 2, y: 100 };  // Pivot point for pendulum
     
     // Time step for simulation (seconds)
-    const timeStep = 0.01; 
-    const animationSpeed = 20; // ms
+    const timeStep = 0.016; // ~60fps
+    const animationSpeed = 16; // ms - smoother animation
     
     // Reset simulation
     const resetSimulation = () => {
@@ -149,54 +150,163 @@ function PendulumSimulation() {
         setParams(prev => ({ ...prev, damping: newDamping[0] / 100 }));
     };
 
+    // Toggle simulation
+    const toggleSimulation = () => {
+        setIsRunning(!isRunning);
+    };
+
     return (
         <div className="flex flex-col items-center w-full p-4 animate-fade-in">
             <h2 className="text-xl font-bold mb-4">Pendulum Simulation</h2>
             
             <div className="relative w-full h-[400px] bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-lg shadow-lg overflow-hidden">
                 <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="mx-auto">
-                    {/* Background */}
-                    <rect x="0" y="0" width={width} height={height} fill="transparent" />
+                    {/* Background grid for reference */}
+                    <g opacity="0.1" stroke="currentColor">
+                        {Array.from({ length: 11 }).map((_, i) => (
+                            <line 
+                                key={`v-${i}`} 
+                                x1={i * (width / 10)} 
+                                y1="0" 
+                                x2={i * (width / 10)} 
+                                y2={height} 
+                                strokeWidth="1" 
+                            />
+                        ))}
+                        {Array.from({ length: 9 }).map((_, i) => (
+                            <line 
+                                key={`h-${i}`} 
+                                x1="0" 
+                                y1={i * (height / 8)} 
+                                x2={width} 
+                                y2={i * (height / 8)} 
+                                strokeWidth="1" 
+                            />
+                        ))}
+                    </g>
                     
-                    {/* Pivot point */}
-                    <circle cx={origin.x} cy={origin.y} r="6" fill="#374151" />
+                    {/* Pivot support */}
+                    <rect x={origin.x - 30} y={origin.y - 80} width="60" height="80" fill="#374151" />
+                    <rect x={origin.x - 40} y={origin.y - 85} width="80" height="10" fill="#4B5563" />
+                    
+                    {/* Pivot point with shadow */}
+                    <circle cx={origin.x} cy={origin.y} r="8" fill="#4B5563">
+                        <filter id="shadow">
+                            <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.3" />
+                        </filter>
+                    </circle>
+                    <circle cx={origin.x} cy={origin.y} r="6" fill="#374151" filter="url(#shadow)" />
+                    
+                    {/* Rest position indicator (vertical) */}
+                    <line 
+                        x1={origin.x} 
+                        y1={origin.y} 
+                        x2={origin.x} 
+                        y2={origin.y + params.length + 30} 
+                        stroke="rgba(156, 163, 175, 0.4)" 
+                        strokeWidth="1" 
+                        strokeDasharray="4"
+                    />
                     
                     {/* Pendulum trail */}
                     {showTrail && trail.length > 1 && (
-                        <polyline
-                            points={trail.map(p => `${p.x},${p.y}`).join(' ')}
-                            fill="none"
-                            stroke="rgba(99, 102, 241, 0.3)"
-                            strokeWidth="2"
-                        />
+                        <>
+                            {/* Add a subtle glow filter for the trail */}
+                            <defs>
+                                <filter id="trailGlow">
+                                    <feGaussianBlur stdDeviation="1.5" result="glow" />
+                                    <feMerge>
+                                        <feMergeNode in="glow" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            <polyline
+                                points={trail.map(p => `${p.x},${p.y}`).join(' ')}
+                                fill="none"
+                                stroke="rgba(99, 102, 241, 0.5)"
+                                strokeWidth="2"
+                                filter="url(#trailGlow)"
+                            />
+                        </>
                     )}
                     
-                    {/* Pendulum string */}
+                    {/* Shadow below pendulum (projected onto ground) */}
+                    <ellipse 
+                        cx={origin.x + Math.sin(angle) * 80} 
+                        cy={origin.y + params.length + 30} 
+                        rx={Math.sqrt(params.mass) * 4 + 5} 
+                        ry={Math.sqrt(params.mass) * 2 + 2} 
+                        fill="rgba(0,0,0,0.2)" 
+                    />
+                    
+                    {/* Pendulum string with subtle gradient */}
+                    <defs>
+                        <linearGradient id="stringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#6B7280" />
+                            <stop offset="50%" stopColor="#9CA3AF" />
+                            <stop offset="100%" stopColor="#6B7280" />
+                        </linearGradient>
+                    </defs>
                     <line
                         x1={origin.x}
                         y1={origin.y}
                         x2={pendulumX}
                         y2={pendulumY}
-                        stroke="#374151"
+                        stroke="url(#stringGradient)"
                         strokeWidth="2"
                     />
                     
-                    {/* Pendulum bob */}
+                    {/* Pendulum bob with shadow and metallic effect */}
+                    <defs>
+                        <radialGradient id="bobGradient" cx="40%" cy="40%" r="60%" fx="40%" fy="40%">
+                            <stop offset="0%" stopColor="rgba(122, 125, 255, 1)" />
+                            <stop offset="100%" stopColor="rgba(99, 102, 241, 0.8)" />
+                        </radialGradient>
+                        <filter id="bobShadow">
+                            <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.3" />
+                        </filter>
+                    </defs>
                     <circle
                         cx={pendulumX}
                         cy={pendulumY}
                         r={Math.sqrt(params.mass) * 5}
-                        fill="rgba(99, 102, 241, 0.8)"
+                        fill="url(#bobGradient)"
                         stroke="#4338ca"
                         strokeWidth="2"
+                        filter="url(#bobShadow)"
+                    >
+                        {/* Add subtle shimmer */}
+                        {isRunning && (
+                            <animate 
+                                attributeName="opacity" 
+                                values="1;0.9;1" 
+                                dur="1.5s" 
+                                repeatCount="indefinite" 
+                            />
+                        )}
+                    </circle>
+                    
+                    {/* Highlight on the bob */}
+                    <circle
+                        cx={pendulumX - Math.sqrt(params.mass) * 2}
+                        cy={pendulumY - Math.sqrt(params.mass) * 2}
+                        r={Math.sqrt(params.mass) * 1.5}
+                        fill="rgba(255, 255, 255, 0.3)"
                     />
                     
-                    {/* Angle indicator */}
+                    {/* Angle indicator with improved appearance */}
+                    <defs>
+                        <linearGradient id="angleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="rgba(239, 68, 68, 0.7)" />
+                            <stop offset="100%" stopColor="rgba(239, 68, 68, 0.2)" />
+                        </linearGradient>
+                    </defs>
                     <path
                         d={`M ${origin.x},${origin.y} L ${origin.x},${origin.y + 50} A 50 50 0 ${angle > 0 ? 0 : 1} 0 ${origin.x + 50 * Math.sin(angle)},${origin.y + 50 * Math.cos(angle)}`}
-                        stroke="rgba(239, 68, 68, 0.5)"
+                        stroke="url(#angleGradient)"
                         strokeWidth="2"
-                        strokeDasharray="3"
+                        strokeDasharray="4"
                         fill="none"
                     />
                     <text
@@ -204,15 +314,28 @@ function PendulumSimulation() {
                         y={origin.y + 30 * Math.cos(angle / 2)}
                         fontSize="14"
                         fill="currentColor"
+                        fontWeight="bold"
                     >
                         {Math.abs(angle * 180 / Math.PI).toFixed(0)}°
                     </text>
                     
+                    {/* Energy visualization */}
+                    <g transform={`translate(${width - 120}, 20)`}>
+                        <rect x="0" y="0" width="100" height="70" rx="5" fill="rgba(243, 244, 246, 0.7)" stroke="rgba(209, 213, 219, 0.8)" />
+                        <text x="10" y="20" fontSize="12" fill="#374151">Energy:</text>
+                        <rect x="10" y="30" width="80" height="8" rx="2" fill="rgba(209, 213, 219, 0.5)" />
+                        <rect x="10" y="30" width={80 * (parseFloat(energy.kinetic) / parseFloat(energy.total))} height="8" rx="2" fill="rgba(59, 130, 246, 0.7)" />
+                        <rect x="10" y="45" width="80" height="8" rx="2" fill="rgba(209, 213, 219, 0.5)" />
+                        <rect x="10" y="45" width={80 * (parseFloat(energy.potential) / parseFloat(energy.total))} height="8" rx="2" fill="rgba(239, 68, 68, 0.7)" />
+                        <text x="10" y="65" fontSize="10" fill="#4B5563">KE</text>
+                        <text x="80" y="65" fontSize="10" fill="#4B5563" textAnchor="end">PE</text>
+                    </g>
+                    
                     {/* Stats */}
-                    <text x="10" y="30" fontSize="14" fill="currentColor">
+                    <text x="10" y="30" fontSize="14" fill="currentColor" fontWeight="medium">
                         Time: {time.toFixed(2)} s
                     </text>
-                    <text x="10" y="50" fontSize="14" fill="currentColor">
+                    <text x="10" y="50" fontSize="14" fill="currentColor" fontWeight="medium">
                         Period: {period.toFixed(2)} s
                     </text>
                 </svg>
@@ -326,7 +449,7 @@ function PendulumSimulation() {
             
             <div className="flex justify-center space-x-4 mt-6">
                 <Button 
-                    onClick={() => setIsRunning(!isRunning)} 
+                    onClick={toggleSimulation} 
                     variant="outline"
                     size="lg"
                     className="space-x-2"
