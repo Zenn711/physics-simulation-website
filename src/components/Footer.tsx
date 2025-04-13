@@ -15,9 +15,9 @@ const Footer = () => {
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <Atom className="h-8 w-8 text-neon-purple" />
-              <span className="text-2xl font-bold">Physics Playground</span>
+              <span className="text-2xl font-display font-bold">Physics Playground</span>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
+            <p className="text-gray-600 dark:text-gray-300 mb-4 font-body">
               Interactive physics simulations that make learning engaging and intuitive. 
               Explore complex concepts through hands-on experimentation.
             </p>
@@ -39,8 +39,8 @@ const Footer = () => {
           
           {/* Quick links */}
           <div>
-            <h3 className="font-bold mb-4">Explore</h3>
-            <ul className="space-y-2">
+            <h3 className="font-heading font-bold mb-4">Explore</h3>
+            <ul className="space-y-2 font-body">
               <li>
                 <Link to="/simulation" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
                   Simulations
@@ -66,8 +66,8 @@ const Footer = () => {
           
           {/* Simulations */}
           <div>
-            <h3 className="font-bold mb-4">Simulations</h3>
-            <ul className="space-y-2">
+            <h3 className="font-heading font-bold mb-4">Simulations</h3>
+            <ul className="space-y-2 font-body">
               <li>
                 <Link to="/simulation?tab=projectile" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
                   Projectile Motion
@@ -87,7 +87,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
+        <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm font-body">
           <p>© {new Date().getFullYear()} Physics Playground. All rights reserved.</p>
         </div>
       </div>

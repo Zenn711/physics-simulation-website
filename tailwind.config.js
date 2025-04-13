@@ -19,6 +19,12 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+        heading: ["var(--font-heading)", ...fontFamily.sans],
+        display: ["var(--font-display)", ...fontFamily.sans],
+        body: ["var(--font-body)", ...fontFamily.sans],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -46,9 +52,6 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {
@@ -126,7 +129,15 @@ export default {
         },
         '.orbital': {
           'animation': 'orbital 20s linear infinite',
-        }
+        },
+        '.font-tech': {
+          'letter-spacing': '0.025em',
+          'font-feature-settings': "'ss01', 'ss03'",
+        },
+        '.font-tech-tight': {
+          'letter-spacing': '-0.025em',
+          'font-feature-settings': "'ss01', 'ss03'",
+        },
       })
     }),
   ],

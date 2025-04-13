@@ -85,20 +85,20 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col md:flex-row items-center gap-8 md:gap-16 relative z-10">
         <div className="md:w-1/2 z-10">
           <div className="reveal-stagger">
-            <span className="uppercase text-xs font-medium tracking-widest text-white/70 mb-2 block">Explore Physics</span>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 layer-1 text-white leading-tight">
+            <span className="uppercase text-xs font-medium tracking-widest text-white/70 mb-2 block font-sans">Explore Physics</span>
+            <h1 className="font-display font-tech-tight mb-6 layer-1 text-white leading-tight">
               Interactive
               <br />
               <span className="text-neon-cyan">Physics Simulations</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-md layer-1">
+            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-md layer-1 font-body">
               Discover the fundamentals of physics through immersive, interactive experiences designed for hands-on learning.
             </p>
             
             <div className="flex flex-wrap gap-4 layer-1">
               <Link to="/simulation">
-                <Button size="lg" className="group hover-scale bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white relative overflow-hidden glow-button">
+                <Button size="lg" className="group hover-scale bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white relative overflow-hidden glow-button font-sans">
                   <span className="relative z-10 flex items-center">
                     Get Started
                     <ChevronRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" size={18} />
@@ -107,7 +107,7 @@ const HeroSection = () => {
               </Link>
               
               <Link to="/simulation">
-                <Button variant="outline" size="lg" className="border-white/20 text-white group hover-scale glow-on-hover">
+                <Button variant="outline" size="lg" className="border-white/20 text-white group hover-scale glow-on-hover font-sans">
                   <Play className="mr-2 transition-transform duration-300 group-hover:scale-110" size={18} />
                   Try Demo
                 </Button>

@@ -94,8 +94,8 @@ const FeaturesSection = () => {
       <div className="container mx-auto px-4">
         <ScrollReveal animation="fade-in">
           <div className="text-center mb-16">
-            <span className="uppercase text-xs font-medium tracking-widest text-white/70 mb-2 block">Discover</span>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+            <span className="uppercase text-xs font-medium tracking-widest text-white/70 mb-2 block font-sans">Discover</span>
+            <h2 className="mb-4 font-tech">
               <span className="text-white">Explore Our</span>
               <span className="ml-2 text-neon-cyan">Simulations</span>
             </h2>

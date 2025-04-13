@@ -40,17 +40,17 @@ const CTASection = () => {
           <div className="absolute -left-20 -top-20 w-64 h-64 bg-neon-cyan/10 rounded-full blur-3xl"></div>
           
           <div className="relative z-10 max-w-3xl mx-auto text-center stagger">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-text-primary dark:text-white">
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-text-primary dark:text-white font-tech">
               Ready to Explore the World of Physics?
             </h2>
             
-            <p className="text-lg text-text-secondary dark:text-gray-300 mb-8">
+            <p className="text-lg font-body text-text-secondary dark:text-gray-300 mb-8">
               Jump into our interactive simulations and transform the way you learn and understand physics concepts.
             </p>
             
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/simulation">
-                <Button size="lg" className="group hover-scale bg-gradient-to-r from-neon-blue to-neon-cyan hover:from-neon-cyan hover:to-neon-blue text-white">
+                <Button size="lg" className="group hover-scale bg-gradient-to-r from-neon-blue to-neon-cyan hover:from-neon-cyan hover:to-neon-blue text-white font-sans">
                   Start Exploring
                   <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" size={18} />
                 </Button>

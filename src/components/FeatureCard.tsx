@@ -64,14 +64,14 @@ const FeatureCard = ({
             "flex-1 z-10",
             position === 'right' ? 'text-right' : 'text-left'
           )}>
-            <div className={`uppercase text-xs font-medium tracking-widest mb-1 bg-gradient-to-r ${color} bg-clip-text text-transparent`}>{category}</div>
-            <h3 className="text-xl md:text-2xl font-bold mb-3 text-white">{title}</h3>
-            <p className="text-white/70 mb-4">{description}</p>
+            <div className={`uppercase text-xs font-medium font-sans tracking-widest mb-1 bg-gradient-to-r ${color} bg-clip-text text-transparent`}>{category}</div>
+            <h3 className="text-xl md:text-2xl font-heading font-bold mb-3 text-white">{title}</h3>
+            <p className="text-white/70 mb-4 font-body">{description}</p>
             
             <Link 
               to="/simulation" 
               className={cn(
-                "inline-flex items-center text-sm font-medium",
+                "inline-flex items-center text-sm font-medium font-sans",
                 "text-white/70 hover:text-white",
                 "transition-all duration-300 group",
                 position === 'right' ? 'flex-row-reverse' : 'flex-row'

@@ -36,18 +36,18 @@ const Header = () => {
       <div className="container px-4 mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2 group">
           <Atom className={`h-8 w-8 ${scrolled ? 'text-neon-purple' : 'text-primary'} group-hover:animate-pulse-glow transition-colors`} />
-          <h1 className={`text-2xl font-bold tracking-tight ${scrolled ? 'text-gradient' : ''}`}>
+          <h1 className={`text-2xl font-display font-bold tracking-tight ${scrolled ? 'text-gradient' : ''}`}>
             Physics Playground
           </h1>
         </Link>
         
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/simulation" className="text-gray-700 dark:text-gray-200 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+          <Link to="/simulation" className="font-sans text-gray-700 dark:text-gray-200 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
             Simulations
           </Link>
           
-          <a href="#features" className="text-gray-700 dark:text-gray-200 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+          <a href="#features" className="font-sans text-gray-700 dark:text-gray-200 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
             Features
           </a>
           
@@ -61,7 +61,7 @@ const Header = () => {
           </Button>
           
           <Link to="/simulation">
-            <Button variant="default" className="bg-gradient-to-r from-neon-purple to-neon-cyan hover:from-neon-cyan hover:to-neon-purple text-white">
+            <Button variant="default" className="font-sans bg-gradient-to-r from-neon-purple to-neon-cyan hover:from-neon-cyan hover:to-neon-purple text-white">
               Get Started
             </Button>
           </Link>
@@ -95,7 +95,7 @@ const Header = () => {
           <div className="container px-4 mx-auto space-y-3">
             <Link 
               to="/simulation" 
-              className="block py-2 text-gray-700 dark:text-gray-200 hover:text-neon-purple dark:hover:text-neon-cyan"
+              className="font-sans block py-2 text-gray-700 dark:text-gray-200 hover:text-neon-purple dark:hover:text-neon-cyan"
               onClick={() => setMobileMenuOpen(false)}
             >
               Simulations
@@ -103,7 +103,7 @@ const Header = () => {
             
             <a 
               href="#features" 
-              className="block py-2 text-gray-700 dark:text-gray-200 hover:text-neon-purple dark:hover:text-neon-cyan"
+              className="font-sans block py-2 text-gray-700 dark:text-gray-200 hover:text-neon-purple dark:hover:text-neon-cyan"
               onClick={() => setMobileMenuOpen(false)}
             >
               Features
@@ -114,7 +114,7 @@ const Header = () => {
               className="block"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <Button className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan hover:from-neon-cyan hover:to-neon-purple text-white">
+              <Button className="w-full font-sans bg-gradient-to-r from-neon-purple to-neon-cyan hover:from-neon-cyan hover:to-neon-purple text-white">
                 Get Started
               </Button>
             </Link>
