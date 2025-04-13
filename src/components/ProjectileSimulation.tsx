@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { Slider } from "@/components/ui/slider"
@@ -11,7 +10,7 @@ import { useTheme } from "@/hooks/use-theme"
 
 interface ProjectileSimulationProps {
   soundEnabled?: boolean;
-  playSound?: (sound: string) => void;
+  playSound?: (sound?: string) => void;
 }
 
 const ProjectileSimulation: React.FC<ProjectileSimulationProps> = ({ 

@@ -8,7 +8,12 @@ import SpringSimulation from './SpringSimulation';
 import { useSoundEffects } from '@/hooks/use-sound-effects';
 import SoundToggle from '@/components/SoundToggle';
 
-const SimulationTabs = ({ defaultTab = 'projectile' }) => {
+// Define interface for the component props
+interface SimulationTabsProps {
+  defaultTab?: string;
+}
+
+const SimulationTabs: React.FC<SimulationTabsProps> = ({ defaultTab = 'projectile' }) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [searchParams, setSearchParams] = useSearchParams();
   const { 
@@ -23,7 +28,7 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
     setActiveTab(defaultTab);
   }, [defaultTab]);
 
-  const handleTabChange = (value) => {
+  const handleTabChange = (value: string) => {
     setActiveTab(value);
     setSearchParams({ tab: value });
   };
@@ -62,17 +67,11 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
       </TabsContent>
       
       <TabsContent value="pendulum" className="mt-0">
-        <PendulumSimulation 
-          soundEnabled={soundEnabled}
-          playSound={playPendulumSwing}
-        />
+        <PendulumSimulation />
       </TabsContent>
       
       <TabsContent value="spring" className="mt-0">
-        <SpringSimulation 
-          soundEnabled={soundEnabled}
-          playSound={playSpringOscillation}
-        />
+        <SpringSimulation />
       </TabsContent>
     </Tabs>
   );
