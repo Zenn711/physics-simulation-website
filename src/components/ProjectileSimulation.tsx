@@ -4,16 +4,19 @@ import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { Moon, Sun, Mars } from 'lucide-react';
+import { Moon, Sun, Globe } from 'lucide-react'; // Changed Mars to Globe
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/hooks/use-theme"
 
 interface ProjectileSimulationProps {
-  soundEnabled: boolean;
-  playSound: (sound: string) => void;
+  soundEnabled?: boolean;
+  playSound?: (sound: string) => void;
 }
 
-const ProjectileSimulation: React.FC<ProjectileSimulationProps> = ({ soundEnabled, playSound }) => {
+const ProjectileSimulation: React.FC<ProjectileSimulationProps> = ({ 
+  soundEnabled = false, 
+  playSound = () => {} 
+}) => {
   const [velocity, setVelocity] = useState(25); // Initial velocity
   const [angle, setAngle] = useState(45);       // Launch angle in degrees
   const [gravity, setGravity] = useState(9.81);   // Acceleration due to gravity (Earth)
@@ -109,7 +112,7 @@ const ProjectileSimulation: React.FC<ProjectileSimulationProps> = ({ soundEnable
   };
 
   const startSimulation = async () => {
-    if (soundEnabled) {
+    if (soundEnabled && playSound) {
       playSound('projectile-launch');
     }
     const { finalTime, finalDistance } = calculateTrajectory();
@@ -157,7 +160,7 @@ const ProjectileSimulation: React.FC<ProjectileSimulationProps> = ({ soundEnable
       case 'moon':
         return <Moon className="h-5 w-5" />;
       case 'mars':
-        return <Mars className="h-5 w-5" />;
+        return <Globe className="h-5 w-5" />; // Changed Mars to Globe
       default:
         return <Sun className="h-5 w-5" />;
     }

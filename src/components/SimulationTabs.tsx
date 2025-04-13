@@ -11,7 +11,13 @@ import SoundToggle from '@/components/SoundToggle';
 const SimulationTabs = ({ defaultTab = 'projectile' }) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { soundEnabled, toggleSound } = useSoundEffects();
+  const { 
+    soundEnabled, 
+    toggleSound, 
+    playProjectileLaunch, 
+    playPendulumSwing, 
+    playSpringOscillation 
+  } = useSoundEffects();
 
   useEffect(() => {
     setActiveTab(defaultTab);
@@ -49,7 +55,10 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
       </div>
 
       <TabsContent value="projectile" className="mt-0">
-        <ProjectileSimulation />
+        <ProjectileSimulation 
+          soundEnabled={soundEnabled} 
+          playSound={playProjectileLaunch} 
+        />
       </TabsContent>
       
       <TabsContent value="pendulum" className="mt-0">
