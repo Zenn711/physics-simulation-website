@@ -21,7 +21,8 @@ const FeaturesSection = () => {
       description: "Explore the fascinating world of projectile motion across different planetary environments and gravity fields.",
       category: "Physics",
       position: 'left' as const,
-      color: "from-neon-cyan to-neon-blue"
+      color: "from-neon-cyan to-neon-blue",
+      simulationType: "projectile"
     },
     {
       icon: <Activity className="feature-icon" />,
@@ -29,7 +30,8 @@ const FeaturesSection = () => {
       description: "Visualize the elegant motion of pendulums and understand the principles of harmonic oscillation.",
       category: "Mechanics",
       position: 'center' as const,
-      color: "from-neon-blue to-neon-purple" 
+      color: "from-neon-blue to-neon-purple",
+      simulationType: "pendulum"
     },
     {
       icon: <Zap className="feature-icon" />,
@@ -37,7 +39,8 @@ const FeaturesSection = () => {
       description: "Experiment with compression and tension in spring systems while visualizing energy transfer in real-time.",
       category: "Energy",
       position: 'right' as const,
-      color: "from-neon-purple to-neon-cyan"
+      color: "from-neon-purple to-neon-cyan",
+      simulationType: "spring"
     },
     {
       icon: <Waves className="feature-icon" />,
@@ -45,7 +48,8 @@ const FeaturesSection = () => {
       description: "Visualize how waves travel through a medium and experiment with amplitude, frequency, and damping effects.",
       category: "Waves",
       position: 'left' as const,
-      color: "from-neon-cyan to-neon-blue"
+      color: "from-neon-cyan to-neon-blue",
+      simulationType: "wave"
     },
     {
       icon: <Atom className="feature-icon" />,
@@ -53,7 +57,8 @@ const FeaturesSection = () => {
       description: "Adjust parameters and see immediate results, making abstract concepts concrete and tangible.",
       category: "Education",
       position: 'center' as const,
-      color: "from-neon-blue to-neon-purple"
+      color: "from-neon-blue to-neon-purple",
+      simulationType: "projectile" // Default to projectile for general features
     },
     {
       icon: <Orbit className="feature-icon" />,
@@ -61,7 +66,8 @@ const FeaturesSection = () => {
       description: "Coming soon: fluid dynamics and electromagnetism visualizations.",
       category: "Coming Soon",
       position: 'right' as const,
-      color: "from-neon-purple to-neon-cyan"
+      color: "from-neon-purple to-neon-cyan",
+      simulationType: "projectile" // Default to projectile for coming soon features
     }
   ];
 
@@ -126,6 +132,7 @@ const FeaturesSection = () => {
                 category={feature.category}
                 position={feature.position}
                 color={feature.color}
+                simulationType={feature.simulationType}
               />
             </div>
           ))}

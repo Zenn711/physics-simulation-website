@@ -14,6 +14,7 @@ interface FeatureCardProps {
   category?: string;
   position?: 'left' | 'center' | 'right';
   color?: string;
+  simulationType?: string;
 }
 
 const FeatureCard = ({ 
@@ -24,7 +25,8 @@ const FeatureCard = ({
   className,
   category = "Feature",
   position = 'left',
-  color = "from-neon-blue to-neon-cyan"
+  color = "from-neon-blue to-neon-cyan",
+  simulationType = "projectile"
 }: FeatureCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -72,7 +74,7 @@ const FeatureCard = ({
             <p className="text-sm text-white/70 mb-3 font-body">{description}</p>
             
             <Link 
-              to="/simulation" 
+              to={`/simulation?tab=${simulationType}`} 
               className={cn(
                 "inline-flex items-center text-sm font-medium font-sans",
                 "text-white/70 hover:text-white",
