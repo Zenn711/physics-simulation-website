@@ -69,7 +69,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border selection:bg-primary/20 selection:text-foreground;
   }
 
   body {
@@ -102,4 +102,27 @@
   .simulation-tabs {
     @apply flex space-x-1 mb-6 overflow-x-auto;
   }
+
+  /* Dark mode particle animation */
+  .particle-container {
+    background: radial-gradient(ellipse at bottom, #1A1F2C 0%, #090A0F 100%);
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-[1.02];
+  }
+
+  .story-link {
+    @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+}
+
+/* Animations */
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.dark .particle {
+  box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.3);
 }

@@ -1,13 +1,26 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProjectileSimulation from './ProjectileSimulation';
 import PendulumSimulation from './PendulumSimulation';
 import SpringSimulation from './SpringSimulation';
 
-const SimulationTabs = () => {
+const SimulationTabs = ({ defaultTab = 'projectile' }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    setActiveTab(defaultTab);
+  }, [defaultTab]);
+
+  const handleTabChange = (value) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value });
+  };
+
   return (
-    <Tabs defaultValue="projectile" className="w-full">
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <div className="border-b mb-4">
         <TabsList className="flex w-full justify-start h-auto p-0 bg-transparent border-b">
           <TabsTrigger
