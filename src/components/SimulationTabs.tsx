@@ -15,7 +15,7 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
     setActiveTab(defaultTab);
   }, [defaultTab]);
 
-  const handleTabChange = (value) => {
+  const handleTabChange = (value: string) => {
     setActiveTab(value);
     setSearchParams({ tab: value });
   };
