@@ -20,9 +20,7 @@ const Home = () => {
       <main className="flex-grow">
         <HeroSection />
         
-        <ScrollReveal animation="fade-in">
-          <FeaturesSection />
-        </ScrollReveal>
+        <FeaturesSection />
         
         <ScrollReveal animation="fade-in" delay={100}>
           <CTASection />

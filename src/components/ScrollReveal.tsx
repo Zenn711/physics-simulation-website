@@ -58,12 +58,14 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       }}
       data-animation={animation}
     >
-      <style jsx>{`
+      <style>
+        {`
         .animated {
           opacity: 1 !important;
           transform: translateY(0) translateX(0) scale(1) !important;
         }
-      `}</style>
+        `}
+      </style>
       {children}
     </div>
   );
