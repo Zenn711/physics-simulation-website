@@ -14,8 +14,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 196 80% 40%;
-    --primary-foreground: 196 100% 98%;
+    --primary: 246 83.3% 67.1%;
+    --primary-foreground: 246 100% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -31,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 196 80% 40%;
+    --ring: 246 83.3% 67.1%;
 
     --radius: 0.5rem;
   }
@@ -46,8 +46,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 196 80% 40%;
-    --primary-foreground: 196 100% 98%;
+    --primary: 246 83.3% 67.1%;
+    --primary-foreground: 246 100% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -105,12 +105,7 @@
 
   /* Dark mode particle animation */
   .particle-container {
-    background: radial-gradient(ellipse at bottom, #0F172A 0%, #020617 100%);
-  }
-
-  .particle {
-    @apply absolute rounded-full bg-white/20;
-    animation: float linear infinite, pulse-opacity ease-in-out infinite;
+    background: radial-gradient(ellipse at bottom, #1A1F2C 0%, #090A0F 100%);
   }
 
   .hover-scale {
@@ -128,14 +123,6 @@
   50% { opacity: 0.3; }
 }
 
-@keyframes float {
-  0% { transform: translateY(0) translateX(0); }
-  25% { transform: translateY(-10px) translateX(10px); }
-  50% { transform: translateY(-20px) translateX(0); }
-  75% { transform: translateY(-10px) translateX(-10px); }
-  100% { transform: translateY(0) translateX(0); }
-}
-
 .dark .particle {
-  box-shadow: 0 0 8px 2px rgba(125, 211, 252, 0.4);
+  box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.3);
 }
