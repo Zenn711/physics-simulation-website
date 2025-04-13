@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProjectileSimulation from './ProjectileSimulation';
 import PendulumSimulation from './PendulumSimulation';
 import SpringSimulation from './SpringSimulation';
 import WavePropagationSimulation from './WavePropagationSimulation';
+import ProjectileSimulation from './ProjectileSimulation';
 
 const SimulationTabs = ({ defaultTab = 'projectile' }) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
@@ -15,7 +15,7 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
     setActiveTab(defaultTab);
   }, [defaultTab]);
 
-  const handleTabChange = (value) => {
+  const handleTabChange = (value: string) => {
     setActiveTab(value);
     setSearchParams({ tab: value });
   };
