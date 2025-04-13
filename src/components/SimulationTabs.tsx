@@ -6,6 +6,7 @@ import PendulumSimulation from './PendulumSimulation';
 import SpringSimulation from './SpringSimulation';
 import WavePropagationSimulation from './WavePropagationSimulation';
 import ProjectileSimulation from './ProjectileSimulation';
+import FluidDynamicsSimulation from './FluidDynamicsSimulation';
 
 const SimulationTabs = ({ defaultTab = 'projectile' }) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
@@ -48,6 +49,12 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
           >
             Wave Propagation
           </TabsTrigger>
+          <TabsTrigger
+            value="fluid"
+            className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none"
+          >
+            Fluid Dynamics
+          </TabsTrigger>
         </TabsList>
       </div>
 
@@ -65,6 +72,10 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
       
       <TabsContent value="wave" className="mt-0">
         <WavePropagationSimulation />
+      </TabsContent>
+      
+      <TabsContent value="fluid" className="mt-0">
+        <FluidDynamicsSimulation />
       </TabsContent>
     </Tabs>
   );

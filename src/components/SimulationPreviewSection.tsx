@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Compass, Activity, Zap, Waves } from 'lucide-react';
+import { Compass, Activity, Zap, Waves, Droplets } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ScrollReveal from './ScrollReveal';
 
@@ -70,6 +70,13 @@ const SimulationPreviewSection = () => {
       color: "from-neon-cyan to-neon-blue",
       animationDelay: 4,
       tabValue: "wave"
+    },
+    {
+      icon: <Droplets size={20} />,
+      title: "Fluid Dynamics",
+      color: "from-neon-blue to-neon-purple",
+      animationDelay: 5,
+      tabValue: "fluid"
     }
   ];
 
@@ -90,7 +97,7 @@ const SimulationPreviewSection = () => {
           </div>
         </ScrollReveal>
         
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
           {simulations.map((sim, index) => (
             <SimulationPreview
               key={index}

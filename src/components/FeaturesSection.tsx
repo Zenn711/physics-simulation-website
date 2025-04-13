@@ -8,7 +8,8 @@ import {
   Zap,
   ArrowRight,
   Orbit,
-  Waves
+  Waves,
+  Droplets
 } from 'lucide-react';
 import FeatureCard from './FeatureCard';
 import ScrollReveal from './ScrollReveal';
@@ -52,22 +53,22 @@ const FeaturesSection = () => {
       simulationType: "wave"
     },
     {
+      icon: <Droplets className="feature-icon" />,
+      title: "Fluid Dynamics",
+      description: "Observe how fluids flow around obstacles with adjustable viscosity and flow speeds to understand laminar and turbulent flows.",
+      category: "Fluids",
+      position: 'center' as const,
+      color: "from-neon-blue to-neon-purple",
+      simulationType: "fluid"
+    },
+    {
       icon: <Atom className="feature-icon" />,
       title: "Interactive Learning",
       description: "Adjust parameters and see immediate results, making abstract concepts concrete and tangible.",
       category: "Education",
-      position: 'center' as const,
-      color: "from-neon-blue to-neon-purple",
-      simulationType: "projectile" // Default to projectile for general features
-    },
-    {
-      icon: <Orbit className="feature-icon" />,
-      title: "Advanced Simulations",
-      description: "Coming soon: fluid dynamics and electromagnetism visualizations.",
-      category: "Coming Soon",
       position: 'right' as const,
       color: "from-neon-purple to-neon-cyan",
-      simulationType: "projectile" // Default to projectile for coming soon features
+      simulationType: "projectile" // Default to projectile for general features
     }
   ];
 
