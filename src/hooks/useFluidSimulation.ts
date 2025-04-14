@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Particle, SimulationParams, SimulationType, HighlightEffect } from '../types/fluidSimulation';
 
@@ -41,8 +42,8 @@ export const useFluidSimulation = (
     const y = Math.random() * height;
     
     // Base velocity on flow speed and simulation type
-    // Ensure particles move with sufficient velocity to cross the canvas
-    let vx = params.flowSpeed * (0.8 + Math.random() * 0.4);
+    // Increased base velocity to ensure particles move all the way across
+    let vx = params.flowSpeed * (0.7 + Math.random() * 0.5);
     let vy = (Math.random() - 0.5) * 0.1;
     
     if (simulationType === 'turbulent') {
@@ -56,7 +57,7 @@ export const useFluidSimulation = (
       vx,
       vy,
       age: 0,
-      maxAge: 400 + Math.random() * 200, // Increased maxAge to allow particles to travel farther
+      maxAge: 200 + Math.random() * 200, // Increased maxAge to allow particles to travel farther
       hue: simulationType === 'diffusion' ? 
         Math.floor(180 + Math.random() * 60) : // Blue-cyan for diffusion
         Math.floor(200 + Math.random() * 40),   // Blue for flow
@@ -91,8 +92,8 @@ export const useFluidSimulation = (
       // Age the particle
       p.age += 1;
       
-      // If the particle is too old OR has traveled past the right edge, reset it
-      if (p.age > p.maxAge || p.x > canvas.width) {
+      // If the particle is too old, reset it
+      if (p.age > p.maxAge) {
         const newParticle = createParticle(canvas.width, canvas.height);
         particles[i] = newParticle;
         continue;
@@ -139,14 +140,6 @@ export const useFluidSimulation = (
           p.vx += (Math.random() - 0.5) * 0.5;
           p.vy += (Math.random() - 0.5) * 0.5;
         }
-        
-        // Ensure particles continue moving with sufficient speed after collision
-        const newSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (newSpeed < params.flowSpeed * 0.6) {
-          // Normalize and rescale to maintain minimum speed
-          p.vx = (p.vx / newSpeed) * params.flowSpeed * 0.6;
-          p.vy = (p.vy / newSpeed) * params.flowSpeed * 0.6;
-        }
       } else {
         // Apply flow field and viscosity effects
         if (simulationType === 'laminar') {
@@ -178,11 +171,6 @@ export const useFluidSimulation = (
         p.vx *= viscosityFactor;
         p.vy *= viscosityFactor;
         
-        // Ensure minimum forward velocity (except for diffusion which should be more random)
-        if (simulationType !== 'diffusion' && p.vx < params.flowSpeed * 0.3) {
-          p.vx += 0.01 * params.flowSpeed;
-        }
-        
         // Update position
         p.x += p.vx;
         p.y += p.vy;
@@ -197,8 +185,12 @@ export const useFluidSimulation = (
           p.vx = Math.abs(p.vx); // Ensure it moves right
         }
         
-        // Don't reset particles that are still on screen
-        // They'll be reset only when they move past the right edge or age out
+        if (p.x > canvas.width) {
+          // When particle reaches right edge, reset to left with new position
+          const newParticle = createParticle(canvas.width, canvas.height);
+          particles[i] = newParticle;
+          continue;
+        }
         
         if (p.y < 0) {
           p.y = 0;
@@ -222,8 +214,7 @@ export const useFluidSimulation = (
     if (!ctx) return;
     
     // Clear with a semi-transparent background for trail effect
-    // Reduced opacity for longer-lasting trails
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Draw obstacle
@@ -528,14 +519,12 @@ export const useFluidSimulation = (
     const particles = particlesRef.current;
     
     for (const p of particles) {
-      // Adjust alpha for better visibility across the canvas
-      // Use a slower alpha decay to keep particles visible longer
-      const alpha = Math.min(0.9, 1 - (p.age / (p.maxAge * 1.5)));
+      const alpha = 1 - (p.age / p.maxAge);
       
       if (simulationType === 'diffusion') {
         // Diffusion style: blurry dots
         const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 3);
-        gradient.addColorStop(0, `hsla(${p.hue}, 100%, 50%, ${alpha * 1.2})`);
+        gradient.addColorStop(0, `hsla(${p.hue}, 100%, 50%, ${alpha})`);
         gradient.addColorStop(1, `hsla(${p.hue}, 100%, 50%, 0)`);
         
         ctx.beginPath();
@@ -543,7 +532,7 @@ export const useFluidSimulation = (
         ctx.fillStyle = gradient;
         ctx.fill();
       } else {
-        // Flow style: lines with increased visibility
+        // Flow style: lines
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(p.x - p.vx * 3, p.y - p.vy * 3);
@@ -575,8 +564,7 @@ export const useFluidSimulation = (
           lightness = 50 + normalizedSpeed * 10;
         }
         
-        // Boost visibility
-        ctx.strokeStyle = `hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha * 1.3})`;
+        ctx.strokeStyle = `hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha})`;
         ctx.lineWidth = 1.5 + (p.speed || 0);
         ctx.stroke();
       }
