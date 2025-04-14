@@ -66,9 +66,9 @@ function ProjectileSimulation() {
         setParams(prev => ({ ...prev, velocity: newValue[0] }));
     };
     
-    const handleLaunch = ({}) => {
+    const handleLaunch = (event = {}) => {
         // This is a fix for the TS2554 error: Expected 1-3 arguments, but got 0
-        // Line 196 is modified to pass an argument to handleLaunch()
+        // Now it accepts a default empty object as argument
     };
     
     // Toggle simulation state
