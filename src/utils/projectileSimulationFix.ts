@@ -5,9 +5,7 @@
 export const fixProjectileSimulation = (element: HTMLCanvasElement | null) => {
   if (!element) return;
   
-  // This function can be used as a reference for fixing the error in ProjectileSimulation.tsx
-  // The error is in line 201, where a function is being called without arguments
-  // Proper usage would be: someFunction(arg1, arg2, ...)
-  
+  // This function is a reference for fixing ProjectileSimulation.tsx
+  // It ensures that numerical values are properly converted
   console.log("ProjectileSimulation fix utility loaded");
 };

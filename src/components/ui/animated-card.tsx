@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardProps } from './card';
+import { Card } from './card';
 import { cn } from '@/lib/utils';
 
-interface AnimatedCardProps extends CardProps {
+interface AnimatedCardProps extends React.HTMLAttributes<HTMLDivElement> {
   hoverEffect?: 'lift' | 'glow' | 'border' | 'scale' | 'none';
   animateOnMount?: boolean;
   delay?: number;
