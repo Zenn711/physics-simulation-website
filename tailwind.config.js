@@ -38,15 +38,15 @@ export default {
         accent: "hsl(var(--accent))",
         popover: "hsl(var(--popover))",
         card: "hsl(var(--card))",
-        // New color palette
-        "soft-blue": "#D3E4FD",
-        "soft-gray": "#F1F0FB",
-        "text-primary": "#333333",
-        "text-secondary": "#666666",
         // Custom neon colors
         "neon-purple": "#9333ea",
         "neon-blue": "#3b82f6",
         "neon-cyan": "#06b6d4",
+        // Dark-mode friendly colors
+        "soft-blue": "#8AABFF",
+        "soft-gray": "#98A1C0",
+        "text-primary": "#E0E0E0",
+        "text-secondary": "#A0A0A0",
       },
       borderRadius: {
         lg: "var(--radius)",
