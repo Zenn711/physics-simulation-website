@@ -7,6 +7,8 @@
     <title>physics-playground-simulations</title>
     <meta name="description" content="Lovable Generated Project" />
     <meta name="author" content="Lovable" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0f172a" />
 
     <meta property="og:title" content="physics-playground-simulations" />
     <meta property="og:description" content="Lovable Generated Project" />
@@ -16,6 +18,13 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <script>
+      // Enforce dark mode before the page loads
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+      localStorage.setItem('theme', 'dark');
+    </script>
   </head>
 
   <body class="bg-gray-950 text-white">

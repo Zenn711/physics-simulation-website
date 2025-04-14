@@ -8,15 +8,42 @@ import { useEffect } from "react";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { applyProjectileSimulationFix } from "./utils/projectileSimulationPatch";
 
-const queryClient = new QueryClient();
+// Configure React Query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 60000,
+    },
+  },
+});
 
 const App = () => {
   // Enforce dark mode on initial render and after any changes
   useEffect(() => {
+    // Always enforce dark mode
     document.documentElement.classList.add('dark');
-    // Remove any light mode classes if they exist
     document.documentElement.classList.remove('light');
+    
+    // Set a dark mode attribute that our CSS can use
+    document.documentElement.setAttribute('data-mode', 'dark');
+    
+    // Apply the patch for ProjectileSimulation
+    applyProjectileSimulationFix();
+    
+    // Persist dark mode preference
+    localStorage.setItem('theme', 'dark');
+    
+    // Check theme preference periodically to ensure it stays in dark mode
+    const intervalId = setInterval(() => {
+      if (!document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.add('dark');
+      }
+    }, 1000);
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
