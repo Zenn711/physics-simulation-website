@@ -1,5 +1,4 @@
-
-import { type Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
@@ -20,25 +19,30 @@ export default {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        neon: {
-          purple: "#8B5CF6",
-          blue: "#4F46E5", 
-          cyan: "#06B6D4",
-          pink: "#D946EF",
+        // Update color palette to use black, dark charcoal, and white
+        background: {
+          DEFAULT: "#000000e6",     // Black with slight transparency
+          dark: "#221F26",          // Dark Charcoal
+          light: "#FFFFFF"          // Pure White
+        },
+        foreground: {
+          DEFAULT: "#FFFFFF",       // White text on black
+          dark: "#221F26",          // Dark text on light background
+          light: "#000000"          // Black text on white
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#221F26",       // Dark Charcoal
+          foreground: "#FFFFFF"     // White text
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#000000e6",     // Black
+          foreground: "#FFFFFF"     // White text
         },
+        border: {
+          DEFAULT: "#221F26",       // Dark Charcoal for borders
+        },
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -60,11 +64,13 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      // Existing radius and other theme extensions remain the same
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // Keep existing keyframes and animations
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
