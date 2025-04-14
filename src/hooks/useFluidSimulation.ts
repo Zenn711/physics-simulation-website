@@ -37,16 +37,17 @@ export const useFluidSimulation = (
   
   // Create a single particle
   const createParticle = (width: number, height: number): Particle => {
-    // For consistent flow, create particles on the left side
-    const x = Math.random() * (width / 5);
+    // Distribute particles across the left edge more evenly
+    const x = Math.random() * (width / 10);
     const y = Math.random() * height;
     
     // Base velocity on flow speed and simulation type
-    let vx = params.flowSpeed * (0.5 + Math.random() * 0.5);
+    // Increased base velocity to ensure particles move all the way across
+    let vx = params.flowSpeed * (0.7 + Math.random() * 0.5);
     let vy = (Math.random() - 0.5) * 0.1;
     
     if (simulationType === 'turbulent') {
-      vx *= 0.8 + Math.random() * 0.4;
+      vx *= 0.9 + Math.random() * 0.4; // Ensure even turbulent flow moves forward
       vy = (Math.random() - 0.5) * 0.4;
     }
     
@@ -56,7 +57,7 @@ export const useFluidSimulation = (
       vx,
       vy,
       age: 0,
-      maxAge: 100 + Math.random() * 100,
+      maxAge: 200 + Math.random() * 200, // Increased maxAge to allow particles to travel farther
       hue: simulationType === 'diffusion' ? 
         Math.floor(180 + Math.random() * 60) : // Blue-cyan for diffusion
         Math.floor(200 + Math.random() * 40),   // Blue for flow
@@ -148,15 +149,27 @@ export const useFluidSimulation = (
           // Turbulent flow: More chaotic
           p.vy += (Math.random() - 0.5) * 0.04 * params.flowSpeed;
           p.vx += (Math.random() - 0.5) * 0.01 * params.flowSpeed;
+          
+          // Add a small forward bias to ensure progress
+          if (p.vx < params.flowSpeed * 0.4) {
+            p.vx += 0.01 * params.flowSpeed;
+          }
         } else if (simulationType === 'diffusion') {
           // Diffusion: Slower, more spread out
           p.vy += (Math.random() - 0.5) * 0.03;
-          p.vx *= 0.99; // Slow down over time
+          p.vx *= 0.995; // Slow down over time but not too much
+          
+          // Add small forward bias for diffusion too
+          if (p.vx < params.flowSpeed * 0.2) {
+            p.vx += 0.005 * params.flowSpeed;
+          }
         }
         
         // Apply viscosity - now affects velocity directly
-        p.vx *= (1 - params.viscosity * 0.01);
-        p.vy *= (1 - params.viscosity * 0.01);
+        // Reduced viscosity impact to ensure flow continues
+        const viscosityFactor = Math.min(0.99, 1 - params.viscosity * 0.01);
+        p.vx *= viscosityFactor;
+        p.vy *= viscosityFactor;
         
         // Update position
         p.x += p.vx;
@@ -165,21 +178,28 @@ export const useFluidSimulation = (
         // Calculate speed (for visualization)
         p.speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
         
-        // Boundaries check - improved to ensure continuous flow
-        if (p.x < 0) p.x = 0;
-        if (p.x > canvas.width) {
-          // Reset to left side with new random position
-          p.x = Math.random() * (canvas.width / 10);
-          p.y = Math.random() * canvas.height;
-          p.age = 0; // Reset age to extend lifetime
+        // Boundaries check - improved to allow continuous flow
+        if (p.x < 0) {
+          // If particle moves off the left edge, reset it to the left edge
+          p.x = 0;
+          p.vx = Math.abs(p.vx); // Ensure it moves right
         }
+        
+        if (p.x > canvas.width) {
+          // When particle reaches right edge, reset to left with new position
+          const newParticle = createParticle(canvas.width, canvas.height);
+          particles[i] = newParticle;
+          continue;
+        }
+        
         if (p.y < 0) {
           p.y = 0;
-          p.vy = -p.vy * 0.5; // Bounce
+          p.vy = Math.abs(p.vy) * 0.5; // Bounce with damping
         }
+        
         if (p.y > canvas.height) {
           p.y = canvas.height;
-          p.vy = -p.vy * 0.5; // Bounce
+          p.vy = -Math.abs(p.vy) * 0.5; // Bounce with damping
         }
       }
     }

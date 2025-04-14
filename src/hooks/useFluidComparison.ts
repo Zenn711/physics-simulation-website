@@ -1,85 +1,252 @@
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
-interface ComparisonProps {
+interface ComparisonRefs {
   laminarRef: React.RefObject<HTMLCanvasElement>;
   turbulentRef: React.RefObject<HTMLCanvasElement>;
 }
 
-export const useFluidComparison = ({ laminarRef, turbulentRef }: ComparisonProps) => {
-  // Initialize comparison views for side-by-side visualization
+export const useFluidComparison = ({ laminarRef, turbulentRef }: ComparisonRefs) => {
+  const animationRef = useRef<number | null>(null);
+  const particlesLaminarRef = useRef<any[]>([]);
+  const particlesTurbulentRef = useRef<any[]>([]);
+  
+  // Initialize comparison view
   const initializeComparisonView = () => {
     if (!laminarRef.current || !turbulentRef.current) return;
     
-    const laminarCtx = laminarRef.current.getContext('2d');
-    const turbulentCtx = turbulentRef.current.getContext('2d');
-    if (!laminarCtx || !turbulentCtx) return;
+    // Initialize laminar particles
+    particlesLaminarRef.current = createParticles(100, false);
     
-    // Clear canvases
-    laminarCtx.clearRect(0, 0, laminarRef.current.width, laminarRef.current.height);
-    turbulentCtx.clearRect(0, 0, turbulentRef.current.width, turbulentRef.current.height);
+    // Initialize turbulent particles
+    particlesTurbulentRef.current = createParticles(100, true);
     
-    // Draw static comparison images - simplified version for educational purposes
-    drawComparisonView(laminarCtx, 'laminar', laminarRef.current.width, laminarRef.current.height);
-    drawComparisonView(turbulentCtx, 'turbulent', turbulentRef.current.width, turbulentRef.current.height);
+    // Start comparison animation
+    animateComparison();
   };
   
-  // Draw a static comparison view
-  const drawComparisonView = (ctx: CanvasRenderingContext2D, type: 'laminar' | 'turbulent', width: number, height: number) => {
-    // Draw background
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-    ctx.fillRect(0, 0, width, height);
+  // Create particles for comparison
+  const createParticles = (count: number, isTurbulent: boolean) => {
+    const particles = [];
     
-    // Set up obstacle
-    const obstacleX = width / 2;
-    const obstacleY = height / 2;
-    const obstacleRadius = 25;
+    for (let i = 0; i < count; i++) {
+      // Create particles across the entire left side for better distribution
+      particles.push({
+        x: Math.random() * 20, // Start at the left edge
+        y: Math.random() * 100,
+        vx: 0.7 + Math.random() * 0.5, // Base velocity
+        vy: isTurbulent ? (Math.random() - 0.5) * 0.4 : (Math.random() - 0.5) * 0.1,
+        age: Math.random() * 100,
+        maxAge: 150 + Math.random() * 150, // Increased maxAge to travel full width
+        hue: 210 + Math.random() * 30,
+        turbulent: isTurbulent
+      });
+    }
     
-    // Draw flow field
-    const gridSize = type === 'laminar' ? 20 : 15;
+    return particles;
+  };
+
+  // Animation loop for comparison
+  const animateComparison = () => {
+    if (!laminarRef.current || !turbulentRef.current) return;
     
-    for (let x = 20; x < width - 20; x += gridSize) {
-      for (let y = 20; y < height - 20; y += gridSize) {
+    // Update and draw laminar flow
+    updateAndDrawParticles(
+      laminarRef.current,
+      particlesLaminarRef.current,
+      false
+    );
+    
+    // Update and draw turbulent flow
+    updateAndDrawParticles(
+      turbulentRef.current,
+      particlesTurbulentRef.current,
+      true
+    );
+    
+    animationRef.current = requestAnimationFrame(animateComparison);
+  };
+  
+  // Update and draw particles for comparison
+  const updateAndDrawParticles = (
+    canvas: HTMLCanvasElement,
+    particles: any[],
+    isTurbulent: boolean
+  ) => {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Clear with semi-transparent overlay for trail effect
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw obstacle
+    const obstacleX = canvas.width / 2;
+    const obstacleY = canvas.height / 2;
+    const obstacleRadius = 15;
+    
+    // Draw streamlines
+    drawComparisonStreamlines(ctx, canvas.width, canvas.height, obstacleX, obstacleY, obstacleRadius, isTurbulent);
+    
+    // Draw obstacle
+    ctx.beginPath();
+    ctx.arc(obstacleX, obstacleY, obstacleRadius, 0, Math.PI * 2);
+    ctx.fillStyle = isTurbulent ? '#6a4c93' : '#2a6f97'; 
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Update and draw particles
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      
+      // Age particles
+      p.age += 1;
+      
+      // Reset aged-out particles
+      if (p.age > p.maxAge) {
+        // Reset to left edge with random position
+        p.x = Math.random() * 20;
+        p.y = Math.random() * canvas.height;
+        p.age = 0;
+        p.vx = 0.7 + Math.random() * 0.5;
+        p.vy = isTurbulent ? (Math.random() - 0.5) * 0.4 : (Math.random() - 0.5) * 0.1;
+        continue;
+      }
+      
+      // Calculate distance to obstacle
+      const dx = p.x - obstacleX;
+      const dy = p.y - obstacleY;
+      const distToObstacle = Math.sqrt(dx * dx + dy * dy);
+      
+      // Handle collision with obstacle
+      if (distToObstacle < obstacleRadius + 2) {
+        const nx = dx / distToObstacle;
+        const ny = dy / distToObstacle;
+        
+        // Reflect velocity
+        const dot = p.vx * nx + p.vy * ny;
+        p.vx = p.vx - 2 * dot * nx;
+        p.vy = p.vy - 2 * dot * ny;
+        
+        // Move outside obstacle
+        p.x = obstacleX + (obstacleRadius + 2) * nx;
+        p.y = obstacleY + (obstacleRadius + 2) * ny;
+        
+        // Add turbulence if needed
+        if (isTurbulent) {
+          p.vx += (Math.random() - 0.5) * 0.3;
+          p.vy += (Math.random() - 0.5) * 0.3;
+        }
+      } else {
+        // Apply flow effects
+        if (isTurbulent) {
+          // Turbulent flow effects
+          p.vy += (Math.random() - 0.5) * 0.03;
+          p.vx += (Math.random() - 0.5) * 0.01;
+          
+          // Add small forward bias
+          if (p.vx < 0.3) p.vx += 0.01;
+        } else {
+          // Laminar flow effects
+          p.vy += (canvas.height / 2 - p.y) * 0.0002;
+        }
+        
+        // Update position
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // Handle boundaries - ensure particles flow all the way across
+        if (p.x > canvas.width) {
+          // Reset to left edge when reaching right edge
+          p.x = Math.random() * 20;
+          p.y = Math.random() * canvas.height;
+          p.age = 0;
+          continue;
+        }
+        
+        if (p.x < 0) {
+          p.x = 0;
+          p.vx = Math.abs(p.vx);
+        }
+        
+        if (p.y < 0) {
+          p.y = 0;
+          p.vy = Math.abs(p.vy);
+        }
+        
+        if (p.y > canvas.height) {
+          p.y = canvas.height;
+          p.vy = -Math.abs(p.vy);
+        }
+      }
+      
+      // Draw particle
+      const alpha = 1 - p.age / p.maxAge;
+      const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x - p.vx * 2, p.y - p.vy * 2);
+      
+      const normalizedSpeed = Math.min(1, speed / 2);
+      const hue = isTurbulent ? 
+        ((p.hue + normalizedSpeed * 120) % 360) : // More varied hues for turbulent
+        (p.hue - normalizedSpeed * 40);            // Blue to purple for laminar
+        
+      ctx.strokeStyle = `hsla(${hue}, 80%, 50%, ${alpha})`;
+      ctx.lineWidth = 1 + speed;
+      ctx.stroke();
+    }
+  };
+  
+  // Draw streamlines for comparison view
+  const drawComparisonStreamlines = (
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    obstacleX: number,
+    obstacleY: number,
+    obstacleRadius: number,
+    isTurbulent: boolean
+  ) => {
+    const gridSize = isTurbulent ? 25 : 20;
+    
+    for (let x = 20; x < width; x += gridSize) {
+      for (let y = 20; y < height; y += gridSize) {
         const dx = x - obstacleX;
         const dy = y - obstacleY;
         const distToObstacle = Math.sqrt(dx * dx + dy * dy);
         
         if (distToObstacle < obstacleRadius + 5) continue;
         
-        // Calculate flow vector
-        let vx = 1; // Base flow direction
+        let vx = 1.0;
         let vy = 0;
         
-        // Modify flow based on obstacle
         if (distToObstacle < obstacleRadius * 3) {
           const influence = Math.max(0, 1 - distToObstacle / (obstacleRadius * 3));
           const nx = dx / distToObstacle;
           const ny = dy / distToObstacle;
           
-          // Flow deflection
           if (x < obstacleX) {
             vx -= vx * influence * 0.5;
             vy += ny * influence * (dy < 0 ? -1 : 1);
           } else {
-            // Wake region
             vx = vx * (1 - influence * 0.3);
             vy += ny * influence * 0.5 * (dy < 0 ? -1 : 1);
             
-            // Add turbulence in turbulent mode
-            if (type === 'turbulent') {
-              // Use deterministic "randomness" based on position for static image
-              const seed = Math.sin(x * 0.1) * Math.cos(y * 0.1) * 10000;
-              const randomVal = (seed - Math.floor(seed)) * 2 - 1;
-              vx += randomVal * influence * 0.4;
-              vy += Math.cos(x * 0.2) * influence * 0.4;
+            if (isTurbulent) {
+              vx += (Math.random() - 0.5) * influence * 0.4;
+              vy += (Math.random() - 0.5) * influence * 0.4;
             }
           }
         }
         
         // Normalize and scale vector
         const mag = Math.sqrt(vx * vx + vy * vy);
-        const arrowLength = 10;
         if (mag > 0) {
+          const arrowLength = isTurbulent ? 8 : 10;
           vx = vx / mag * arrowLength;
           vy = vy / mag * arrowLength;
         }
@@ -89,164 +256,44 @@ export const useFluidComparison = ({ laminarRef, turbulentRef }: ComparisonProps
         ctx.moveTo(x, y);
         ctx.lineTo(x + vx, y + vy);
         
-        // Different colors for different flow types
-        let hue, alpha;
-        if (type === 'laminar') {
-          hue = 210;
-          alpha = 0.3;
-        } else {
-          hue = (x > obstacleX) ? 
-            ((y > obstacleY) ? 120 : 280) : // Different colors in wake
-            210; // Same as laminar in front
-          alpha = 0.25;
-        }
-        
-        ctx.strokeStyle = `hsla(${hue}, 80%, 50%, ${alpha})`;
+        const alpha = isTurbulent ? 0.15 : 0.2;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
         ctx.lineWidth = 0.8;
         ctx.stroke();
-        
-        // Draw arrow tip
-        const arrowSize = 2;
-        const angle = Math.atan2(vy, vx);
-        ctx.beginPath();
-        ctx.moveTo(x + vx, y + vy);
-        ctx.lineTo(
-          x + vx - arrowSize * Math.cos(angle - Math.PI / 6),
-          y + vy - arrowSize * Math.sin(angle - Math.PI / 6)
-        );
-        ctx.lineTo(
-          x + vx - arrowSize * Math.cos(angle + Math.PI / 6),
-          y + vy - arrowSize * Math.sin(angle + Math.PI / 6)
-        );
-        ctx.closePath();
-        ctx.fillStyle = `hsla(${hue}, 80%, 50%, ${alpha})`;
-        ctx.fill();
       }
-    }
-    
-    // Draw obstacle
-    const gradient = ctx.createRadialGradient(
-      obstacleX - obstacleRadius * 0.3, obstacleY - obstacleRadius * 0.3,
-      0,
-      obstacleX, obstacleY,
-      obstacleRadius * 1.5
-    );
-    
-    const highPressure = `hsla(${type === 'turbulent' ? 0 : 210}, 80%, 40%, 0.9)`;
-    const lowPressure = `hsla(${type === 'turbulent' ? 260 : 190}, 70%, 50%, 0.7)`;
-    
-    gradient.addColorStop(0, highPressure);
-    gradient.addColorStop(1, lowPressure);
-    
-    ctx.beginPath();
-    ctx.arc(obstacleX, obstacleY, obstacleRadius, 0, Math.PI * 2);
-    ctx.fillStyle = gradient;
-    ctx.fill();
-    ctx.strokeStyle = '#888';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    
-    // Add pressure zones
-    const frontGradient = ctx.createRadialGradient(
-      obstacleX - obstacleRadius, obstacleY,
-      0,
-      obstacleX - obstacleRadius, obstacleY,
-      obstacleRadius * 1.5
-    );
-    frontGradient.addColorStop(0, `rgba(255, 50, 50, 0.3)`);
-    frontGradient.addColorStop(1, 'rgba(255, 50, 50, 0)');
-    
-    ctx.beginPath();
-    ctx.arc(obstacleX - obstacleRadius, obstacleY, obstacleRadius * 1.5, 0, Math.PI * 2);
-    ctx.fillStyle = frontGradient;
-    ctx.fill();
-    
-    // Low pressure zone behind
-    const backGradient = ctx.createRadialGradient(
-      obstacleX + obstacleRadius * 1.5, obstacleY,
-      0,
-      obstacleX + obstacleRadius * 1.5, obstacleY,
-      obstacleRadius * 2
-    );
-    backGradient.addColorStop(0, `rgba(50, 50, 255, 0.25)`);
-    backGradient.addColorStop(1, 'rgba(50, 50, 255, 0)');
-    
-    ctx.beginPath();
-    ctx.arc(obstacleX + obstacleRadius * 1.5, obstacleY, obstacleRadius * 2, 0, Math.PI * 2);
-    ctx.fillStyle = backGradient;
-    ctx.fill();
-    
-    // Add vortices in wake for turbulent flow
-    if (type === 'turbulent') {
-      for (let i = 1; i <= 3; i++) {
-        const vortexX = obstacleX + obstacleRadius * (1 + i * 0.7);
-        const upperY = obstacleY - obstacleRadius * 0.5 * i;
-        const lowerY = obstacleY + obstacleRadius * 0.5 * i;
-        
-        const vortexGradient1 = ctx.createRadialGradient(
-          vortexX, upperY, 0,
-          vortexX, upperY, obstacleRadius * 0.4
-        );
-        vortexGradient1.addColorStop(0, `rgba(255, 100, 100, 0.2)`);
-        vortexGradient1.addColorStop(1, 'rgba(255, 100, 100, 0)');
-        
-        ctx.beginPath();
-        ctx.arc(vortexX, upperY, obstacleRadius * 0.4, 0, Math.PI * 2);
-        ctx.fillStyle = vortexGradient1;
-        ctx.fill();
-        
-        const vortexGradient2 = ctx.createRadialGradient(
-          vortexX, lowerY, 0,
-          vortexX, lowerY, obstacleRadius * 0.4
-        );
-        vortexGradient2.addColorStop(0, `rgba(100, 100, 255, 0.2)`);
-        vortexGradient2.addColorStop(1, 'rgba(100, 100, 255, 0)');
-        
-        ctx.beginPath();
-        ctx.arc(vortexX, lowerY, obstacleRadius * 0.4, 0, Math.PI * 2);
-        ctx.fillStyle = vortexGradient2;
-        ctx.fill();
-      }
-    }
-    
-    // Add title
-    ctx.font = 'bold 14px Arial';
-    ctx.fillStyle = 'white';
-    ctx.textAlign = 'center';
-    ctx.fillText(type === 'laminar' ? 'Laminar Flow' : 'Turbulent Flow', width / 2, 20);
-    
-    // Add key characteristics
-    ctx.font = '12px Arial';
-    
-    if (type === 'laminar') {
-      ctx.fillText('Smooth, ordered flow', width / 2, height - 40);
-      ctx.fillText('Particles follow predictable paths', width / 2, height - 25);
-      ctx.fillText('Higher viscosity, lower speeds', width / 2, height - 10);
-    } else {
-      ctx.fillText('Chaotic, disordered flow', width / 2, height - 40);
-      ctx.fillText('Forms vortices and eddies', width / 2, height - 25);
-      ctx.fillText('Lower viscosity, higher speeds', width / 2, height - 10);
     }
   };
-
-  // Resize comparison canvases
+  
+  // Resize canvases
   const resizeComparisonCanvases = () => {
-    if (laminarRef.current && turbulentRef.current) {
-      const compareContainer = laminarRef.current.parentElement;
-      if (compareContainer) {
-        const halfWidth = compareContainer.clientWidth / 2 - 10; // With some gap
-        
-        laminarRef.current.width = halfWidth;
-        laminarRef.current.height = compareContainer.clientHeight;
-        
-        turbulentRef.current.width = halfWidth;
-        turbulentRef.current.height = compareContainer.clientHeight;
-        
-        initializeComparisonView();
-      }
+    if (!laminarRef.current || !turbulentRef.current) return;
+    
+    const resizeCanvas = (canvas: HTMLCanvasElement) => {
+      const container = canvas.parentElement;
+      if (!container) return;
+      
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+    };
+    
+    resizeCanvas(laminarRef.current);
+    resizeCanvas(turbulentRef.current);
+    
+    // Initialize particles if they don't exist yet
+    if (particlesLaminarRef.current.length === 0) {
+      initializeComparisonView();
     }
   };
-
+  
+  // Clean up animation
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+  
   return {
     initializeComparisonView,
     resizeComparisonCanvases
