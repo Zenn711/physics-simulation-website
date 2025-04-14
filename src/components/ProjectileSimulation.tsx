@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -146,32 +145,42 @@ function ProjectileSimulation() {
                 const x = vx * newTime * (1 - airResistance * newTime);
                 const y = vy * newTime * (1 - airResistance * newTime) - 0.5 * currGravity * newTime * newTime;
 
-                const newPosition = { x, y };
-                setPosition(newPosition);
-                
-                if (showTrail) {
-                    setTrajectory((prev) => [...prev, newPosition]);
-                }
-
-                // Check if projectile has landed (y <= 0)
+                // FIX: Check if projectile would go below ground in this update
                 if (y <= 0) {
-                    setHasLanded(true);
-                    clearInterval(animationRef.current);
-                    
-                    // Calculate landing position
+                    // Calculate exact landing position and time
+                    // Solving the quadratic equation for time when y = 0
                     const a = 0.5 * currGravity;
                     const b = -vy * (1 - airResistance * newTime);
                     const c = 0;
                     
                     const discriminant = b * b - 4 * a * c;
                     const tLand = (-b - Math.sqrt(discriminant)) / (2 * a);
+                    
+                    // Calculate x position at landing time
                     const xLand = vx * tLand * (1 - airResistance * tLand);
                     
+                    // Set position exactly at ground level
                     setPosition({ x: xLand, y: 0 });
+                    setHasLanded(true);
+                    clearInterval(animationRef.current);
+                    
+                    // Add landing position to trajectory if showing trail
+                    if (showTrail) {
+                        setTrajectory(prev => [...prev, { x: xLand, y: 0 }]);
+                    }
+                    
+                    return tLand; // Update time to exact landing time
+                } else {
+                    // Normal position update
+                    const newPosition = { x, y };
+                    setPosition(newPosition);
+                    
+                    if (showTrail) {
+                        setTrajectory(prev => [...prev, newPosition]);
+                    }
+                    
                     return newTime;
                 }
-
-                return newTime;
             });
         }, animationSpeed);
 
@@ -202,305 +211,265 @@ function ProjectileSimulation() {
                     <rect x={width - 50} y={height - 40} width="30" height="10" fill="#4b7b2a" />
                     
                     {/* Trees */}
-                    <circle cx={width - 65} cy={height - 45} r="12" fill="#2d6a1e" />
-                    <circle cx={width - 30} cy={height - 50} r="10" fill="#2d6a1e" />
+                    <path d="M 530,270 L 540,240 L 550,270 Z" fill="#2d4f16" />
+                    <rect x={538} y={270} width="5" height="10" fill="#3d341b" />
                     
-                    {/* Clouds */}
-                    <circle cx={width/4} cy={30} r="12" fill="rgba(255,255,255,0.7)" />
-                    <circle cx={width/4 + 10} cy={25} r="15" fill="rgba(255,255,255,0.7)" />
-                    <circle cx={width/4 + 25} cy={30} r="12" fill="rgba(255,255,255,0.7)" />
-                    
-                    <circle cx={width/2 + 80} cy={50} r="10" fill="rgba(255,255,255,0.7)" />
-                    <circle cx={width/2 + 95} cy={45} r="14" fill="rgba(255,255,255,0.7)" />
+                    <path d="M 565,270 L 575,230 L 585,270 Z" fill="#2d4f16" />
+                    <rect x={572} y={270} width="5" height="10" fill="#3d341b" />
                 </>
             );
         } else if (environment === 'moon') {
             return (
                 <>
-                    {/* Craters */}
-                    <circle cx={width - 150} cy={height - 10} r="20" fill="rgba(100,100,100,0.3)" strokeWidth="2" stroke="rgba(80,80,80,0.5)" />
-                    <circle cx={width - 70} cy={height - 5} r="15" fill="rgba(100,100,100,0.3)" strokeWidth="2" stroke="rgba(80,80,80,0.5)" />
-                    <circle cx={width/3} cy={height - 8} r="12" fill="rgba(100,100,100,0.3)" strokeWidth="2" stroke="rgba(80,80,80,0.5)" />
-                    
-                    {/* Stars */}
-                    {Array(20).fill().map((_, i) => (
-                        <circle 
-                            key={i} 
-                            cx={Math.random() * width} 
-                            cy={Math.random() * (height - 50)} 
-                            r={Math.random() * 1.5} 
-                            fill="white" 
-                        />
-                    ))}
+                    {/* Moon craters */}
+                    <circle cx={width - 70} cy={height - 10} r="20" fill="#808080" stroke="#707070" />
+                    <circle cx={width - 100} cy={height - 20} r="15" fill="#808080" stroke="#707070" />
+                    <circle cx={width - 40} cy={height - 15} r="10" fill="#808080" stroke="#707070" />
                 </>
             );
         } else if (environment === 'mars') {
             return (
                 <>
-                    {/* Mars hills */}
-                    <path d="M0,300 C100,270 200,290 300,280 C400,270 500,290 600,300" fill="#b84c32" />
-                    
-                    {/* Rocks */}
-                    <polygon points="150,290 160,275 170,290" fill="#8c3a26" />
-                    <polygon points="410,290 425,280 430,290" fill="#8c3a26" />
-                    <polygon points="490,290 500,280 510,290" fill="#8c3a26" />
+                    {/* Mars rocks */}
+                    <path d="M 520,280 L 530,270 L 545,275 L 540,290 L 525,295 Z" fill="#963a2d" />
+                    <path d="M 560,270 L 580,265 L 590,280 L 575,290 Z" fill="#963a2d" />
+                    <circle cx={width - 50} cy={height - 10} r="8" fill="#7a3326" />
                 </>
             );
         }
         return null;
     };
-
-    const handleToast = () => {
-        toast({
-          title: "Simulation Info",
-          description: "Projectile motion follows a parabolic path due to constant acceleration from gravity.",
-          variant: "default",
-        });
-    };
-
+    
     return (
         <div className="flex flex-col items-center w-full p-4">
-            <div className="w-full flex flex-wrap items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-foreground">Projectile Motion Simulator</h2>
-                <div className="flex space-x-2">
-                    <button 
-                        onClick={() => setEnvironment('earth')}
-                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'earth' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
-                    >
-                        Earth
-                    </button>
-                    <button 
-                        onClick={() => setEnvironment('moon')}
-                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'moon' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
-                    >
-                        Moon
-                    </button>
-                    <button 
-                        onClick={() => setEnvironment('mars')}
-                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'mars' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
-                    >
-                        Mars
-                    </button>
+            <h2 className="text-xl font-bold mb-4">Projectile Motion Simulator</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                <div className="md:col-span-2">
+                    <Card className="bg-gray-50 dark:bg-gray-900">
+                        <CardContent className="p-4">
+                            {/* Simulation Canvas */}
+                            <div className={`w-full h-[300px] relative rounded-lg overflow-hidden ${environments[environment].background}`}>
+                                <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="mx-auto">
+                                    {/* Background grid */}
+                                    <g opacity="0.2" stroke="currentColor">
+                                        {Array.from({ length: 11 }).map((_, i) => (
+                                            <line 
+                                                key={`v-${i}`} 
+                                                x1={i * (width / 10)} 
+                                                y1="0" 
+                                                x2={i * (width / 10)} 
+                                                y2={height} 
+                                                strokeWidth="1" 
+                                            />
+                                        ))}
+                                        {Array.from({ length: 7 }).map((_, i) => (
+                                            <line 
+                                                key={`h-${i}`} 
+                                                x1="0" 
+                                                y1={i * (height / 6)} 
+                                                x2={width} 
+                                                y2={i * (height / 6)} 
+                                                strokeWidth="1" 
+                                            />
+                                        ))}
+                                    </g>
+                                    
+                                    {/* Terrain */}
+                                    {generateTerrain()}
+                                    
+                                    {/* Ground */}
+                                    <rect x="0" y={height - 20} width={width} height="20" fill={
+                                        environment === 'earth' ? "#8b5e3c" : 
+                                        environment === 'moon' ? "#c2c2c2" : 
+                                        "#d17f64"
+                                    } />
+                                    <line x1="0" y1={height - 20} x2={width} y2={height - 20} strokeWidth="2" stroke="#333333" />
+                                    
+                                    {/* Launcher */}
+                                    <rect x="10" y={height - 40} width="15" height="20" fill="#555555" />
+                                    <line 
+                                        x1="18" 
+                                        y1={height - 40} 
+                                        x2={18 + Math.cos(angleRad) * 40}
+                                        y2={height - 40 - Math.sin(angleRad) * 40} 
+                                        strokeWidth="4" 
+                                        stroke="#777777" 
+                                    />
+                                    
+                                    {/* Projectile trajectory */}
+                                    {showTrail && trajectory.length > 1 && (
+                                        <polyline
+                                            points={trajectory.map(p => `${toCanvasX(p.x)},${toCanvasY(p.y)}`).join(' ')}
+                                            fill="none"
+                                            stroke="rgba(255, 255, 255, 0.7)"
+                                            strokeWidth="2"
+                                            strokeDasharray="4"
+                                        />
+                                    )}
+                                    
+                                    {/* Projectile */}
+                                    <circle 
+                                        cx={toCanvasX(position.x)} 
+                                        cy={toCanvasY(position.y)} 
+                                        r="8" 
+                                        fill="red" 
+                                        stroke="white" 
+                                        strokeWidth="2" 
+                                    />
+                                    
+                                    {/* Position readouts */}
+                                    <g className="stats-box">
+                                        <rect x="10" y="10" width="160" height="70" rx="5" fill="rgba(0, 0, 0, 0.5)" />
+                                        <text x="20" y="30" fill="white" fontSize="12">Time: {time.toFixed(2)}s</text>
+                                        <text x="20" y="50" fill="white" fontSize="12">Distance: {position.x.toFixed(2)}m</text>
+                                        <text x="20" y="70" fill="white" fontSize="12">Height: {Math.max(0, position.y.toFixed(2))}m</text>
+                                    </g>
+                                </svg>
+                            </div>
+                            
+                            {/* Control buttons */}
+                            <div className="flex flex-wrap justify-between items-center gap-2 mt-4">
+                                <div className="flex flex-wrap gap-2">
+                                    <Button 
+                                        onClick={toggleSimulation} 
+                                        variant="outline"
+                                        className="border-gray-700 hover:bg-gray-700"
+                                    >
+                                        {isRunning ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+                                        {isRunning ? 'Pause' : 'Play'}
+                                    </Button>
+                                    
+                                    <Button 
+                                        onClick={resetSimulation}
+                                        variant="outline"
+                                        className="border-gray-700 hover:bg-gray-700"
+                                    >
+                                        <RefreshCw className="mr-2 h-4 w-4" />
+                                        Reset
+                                    </Button>
+                                </div>
+                                
+                                <div className="flex flex-wrap gap-2">
+                                    <Button
+                                        onClick={() => setShowTrail(!showTrail)}
+                                        variant={showTrail ? "secondary" : "outline"}
+                                        className={`border-gray-700 ${showTrail ? "bg-gray-700 hover:bg-gray-600" : "hover:bg-gray-700"}`}
+                                    >
+                                        {showTrail ? 'Hide Trail' : 'Show Trail'}
+                                    </Button>
+                                    
+                                    <Button
+                                        onClick={() => setAutoScale(!autoScale)}
+                                        variant={autoScale ? "secondary" : "outline"}
+                                        className={`border-gray-700 ${autoScale ? "bg-gray-700 hover:bg-gray-600" : "hover:bg-gray-700"}`}
+                                    >
+                                        Auto Scale: {autoScale ? 'ON' : 'OFF'}
+                                    </Button>
+                                </div>
+                            </div>
+                            
+                            {/* Environment selector */}
+                            <div className="flex flex-wrap gap-2 mt-4 justify-center">
+                                <Button 
+                                    onClick={() => setEnvironment('earth')}
+                                    variant={environment === 'earth' ? "secondary" : "outline"}
+                                    className={`border-gray-700 ${environment === 'earth' ? "bg-gray-700 hover:bg-gray-600" : "hover:bg-gray-700"}`}
+                                >
+                                    Earth
+                                </Button>
+                                <Button 
+                                    onClick={() => setEnvironment('moon')}
+                                    variant={environment === 'moon' ? "secondary" : "outline"}
+                                    className={`border-gray-700 ${environment === 'moon' ? "bg-gray-700 hover:bg-gray-600" : "hover:bg-gray-700"}`}
+                                >
+                                    Moon
+                                </Button>
+                                <Button 
+                                    onClick={() => setEnvironment('mars')}
+                                    variant={environment === 'mars' ? "secondary" : "outline"}
+                                    className={`border-gray-700 ${environment === 'mars' ? "bg-gray-700 hover:bg-gray-600" : "hover:bg-gray-700"}`}
+                                >
+                                    Mars
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-            </div>
-            
-            <div className={`relative w-full physics-canvas ${environments[environment].background} h-64 md:h-80 rounded-lg shadow-lg overflow-hidden`}>
-                <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet" className="mx-auto">
-                    {/* Environment terrain */}
-                    {generateTerrain()}
-                    
-                    {/* Ground line */}
-                    <line 
-                        x1="0" 
-                        y1={height} 
-                        x2={width} 
-                        y2={height} 
-                        stroke={environment === 'moon' ? '#aaa' : '#666'} 
-                        strokeWidth="2" 
-                    />
-
-                    {/* Grid for scale reference */}
-                    {autoScale && viewScale !== 1 && (
-                        <g opacity="0.2">
-                            <text x="10" y="20" fontSize="12" fill="currentColor">
-                                Scale: 1:{viewScale.toFixed(1)}
-                            </text>
-                        </g>
-                    )}
-
-                    {/* Trajectory path */}
-                    {showTrail && trajectory.length > 1 && (
-                        <polyline
-                            points={trajectory.map((p) => {
-                                const canvasX = toCanvasX(p.x);
-                                const canvasY = toCanvasY(Math.max(0, p.y));
-                                // Check if point is within canvas
-                                if (canvasX >= 0 && canvasX <= width && canvasY >= 0 && canvasY <= height) {
-                                    return `${canvasX},${canvasY}`;
-                                }
-                                return '';
-                            }).filter(p => p !== '').join(' ')}
-                            fill="none"
-                            stroke={environment === 'earth' ? "rgba(59, 130, 246, 0.6)" : 
-                                    environment === 'moon' ? "rgba(255, 255, 255, 0.6)" :
-                                    "rgba(220, 38, 38, 0.6)"}
-                            strokeWidth="2"
-                        />
-                    )}
-
-                    {/* Angle indicator */}
-                    <line
-                        x1="0"
-                        y1={height}
-                        x2={60 * Math.cos(angleRad)}
-                        y2={height - 60 * Math.sin(angleRad)}
-                        stroke="rgba(239, 68, 68, 0.7)"
-                        strokeWidth="2"
-                        strokeDasharray="4"
-                    />
-                    <text x="25" y={height - 30} fontSize="14" fill="currentColor" fontWeight="bold">
-                        {params.angle}°
-                    </text>
-
-                    {/* Velocity indicator */}
-                    <text x="20" y={height - 10} fontSize="12" fill="currentColor">
-                        v₀ = {params.velocity} m/s
-                    </text>
-
-                    {/* Landing marker - only shown if within canvas */}
-                    {hasLanded && toCanvasX(position.x) <= width && (
-                        <circle
-                            cx={toCanvasX(position.x)}
-                            cy={height}
-                            r="4"
-                            fill="rgba(239, 68, 68, 0.8)"
-                        />
-                    )}
-
-                    {/* Projectile object */}
-                    {toCanvasX(position.x) <= width && toCanvasY(Math.max(0, position.y)) >= 0 && (
-                        <circle
-                            cx={toCanvasX(position.x)}
-                            cy={toCanvasY(Math.max(0, position.y))}
-                            r="8"
-                            fill={environment === 'earth' ? "rgba(239, 68, 68, 1)" : 
-                                environment === 'moon' ? "rgba(200, 200, 200, 1)" : 
-                                "rgba(220, 38, 38, 1)"}
-                            stroke="white"
-                            strokeWidth="1"
-                        >
-                            {/* Add animation pulse effect */}
-                            <animate 
-                                attributeName="opacity" 
-                                values="1;0.7;1" 
-                                dur="1s" 
-                                repeatCount="indefinite" 
-                                begin={isRunning && !hasLanded ? "0s" : "indefinite"}
-                            />
-                        </circle>
-                    )}
-
-                    {/* Height indicator - only if projectile is visible */}
-                    {position.y > 0.5 && toCanvasX(position.x) <= width && (
-                        <>
-                            <line 
-                                x1={toCanvasX(position.x)} 
-                                y1={toCanvasY(position.y)} 
-                                x2={toCanvasX(position.x)} 
-                                y2={height} 
-                                stroke="rgba(107, 114, 128, 0.5)" 
-                                strokeWidth="1" 
-                                strokeDasharray="3"
-                            />
-                            <text 
-                                x={toCanvasX(position.x) + 5} 
-                                y={toCanvasY(position.y / 2)} 
-                                fontSize="12" 
-                                fill="currentColor"
-                            >
-                                {position.y.toFixed(1)}m
-                            </text>
-                        </>
-                    )}
-                </svg>
-            </div>
-            
-            <div className="w-full mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="text-foreground">Launch Angle (°)</span>
-                                    <span className="text-foreground">{params.angle}°</span>
+                
+                <div>
+                    <Card className="bg-gray-50 dark:bg-gray-900">
+                        <CardContent className="pt-6">
+                            <h3 className="text-lg font-semibold mb-4">Launch Parameters</h3>
+                            
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span>Launch Angle</span>
+                                        <span>{params.angle}°</span>
+                                    </div>
+                                    <Slider
+                                        defaultValue={[45]}
+                                        min={0}
+                                        max={90}
+                                        step={1}
+                                        value={[params.angle]}
+                                        onValueChange={handleAngleChange}
+                                    />
                                 </div>
-                                <Slider
-                                    defaultValue={[45]}
-                                    min={0}
-                                    max={90}
-                                    step={1}
-                                    value={[params.angle]}
-                                    onValueChange={handleAngleChange}
-                                />
+                                
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span>Initial Velocity</span>
+                                        <span>{params.velocity} m/s</span>
+                                    </div>
+                                    <Slider
+                                        defaultValue={[20]}
+                                        min={5}
+                                        max={50}
+                                        step={1}
+                                        value={[params.velocity]}
+                                        onValueChange={handleVelocityChange}
+                                    />
+                                </div>
+                                
+                                <Button onClick={handleLaunch} className="w-full">
+                                    Launch
+                                </Button>
                             </div>
                             
-                            <div className="space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="text-foreground">Initial Velocity (m/s)</span>
-                                    <span className="text-foreground">{params.velocity} m/s</span>
+                            <div className="mt-6 space-y-4">
+                                <h4 className="text-md font-medium">Trajectory Info</h4>
+                                
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-gray-200 dark:bg-gray-800 p-3 rounded-md">
+                                        <p className="text-sm font-medium">Max Height</p>
+                                        <p className="text-lg font-bold">{maxHeight.toFixed(2)} m</p>
+                                    </div>
+                                    <div className="bg-gray-200 dark:bg-gray-800 p-3 rounded-md">
+                                        <p className="text-sm font-medium">Range</p>
+                                        <p className="text-lg font-bold">{range.toFixed(2)} m</p>
+                                    </div>
+                                    <div className="bg-gray-200 dark:bg-gray-800 p-3 rounded-md">
+                                        <p className="text-sm font-medium">Gravity</p>
+                                        <p className="text-lg font-bold">{environments[environment].gravity} m/s²</p>
+                                    </div>
+                                    <div className="bg-gray-200 dark:bg-gray-800 p-3 rounded-md">
+                                        <p className="text-sm font-medium">Air Resistance</p>
+                                        <p className="text-lg font-bold">{environments[environment].airResistance}</p>
+                                    </div>
                                 </div>
-                                <Slider
-                                    defaultValue={[20]}
-                                    min={5}
-                                    max={50}
-                                    step={1}
-                                    value={[params.velocity]}
-                                    onValueChange={handleVelocityChange}
-                                />
+                                
+                                <div className="mt-4 p-3 bg-gray-200 dark:bg-gray-800 rounded-md">
+                                    <p className="text-sm font-medium mb-1">Optimal angle for max range: 45°</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                        (without air resistance)
+                                    </p>
+                                </div>
                             </div>
-                            
-                            <div className="flex items-center space-x-2">
-                                <button 
-                                    onClick={() => setShowTrail(!showTrail)}
-                                    className={`px-3 py-1 text-sm rounded-md text-foreground ${showTrail ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
-                                >
-                                    {showTrail ? 'Hide Trail' : 'Show Trail'}
-                                </button>
-                                <button 
-                                    onClick={() => setAutoScale(!autoScale)}
-                                    className={`px-3 py-1 text-sm rounded-md text-foreground ${autoScale ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
-                                >
-                                    {autoScale ? 'Auto Scale: ON' : 'Auto Scale: OFF'}
-                                </button>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium text-foreground-light dark:text-foreground">Environment</p>
-                                <p className="text-lg font-bold capitalize text-foreground-light dark:text-foreground">{environment}</p>
-                            </div>
-                            <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium text-foreground-light dark:text-foreground">Gravity</p>
-                                <p className="text-lg font-bold text-foreground-light dark:text-foreground">{environments[environment].gravity} m/s²</p>
-                            </div>
-                            <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium text-foreground-light dark:text-foreground">Max Height</p>
-                                <p className="text-lg font-bold text-foreground-light dark:text-foreground">{maxHeight.toFixed(2)} m</p>
-                            </div>
-                            <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium text-foreground-light dark:text-foreground">Range</p>
-                                <p className="text-lg font-bold text-foreground-light dark:text-foreground">{range.toFixed(2)} m</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-            
-            <div className="flex justify-center space-x-4 mt-6">
-                <Button 
-                    onClick={toggleSimulation} 
-                    variant="outline"
-                    size="lg"
-                    className="space-x-2 text-foreground"
-                >
-                    {isRunning ? <Pause size={18} /> : <Play size={18} />}
-                    <span>{isRunning ? "Pause" : "Play"}</span>
-                </Button>
-                
-                <Button 
-                    onClick={resetSimulation} 
-                    variant="outline"
-                    size="lg"
-                    className="space-x-2 text-foreground"
-                >
-                    <RefreshCw size={18} />
-                    <span>Reset</span>
-                </Button>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
     );
