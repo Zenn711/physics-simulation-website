@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,10 +6,10 @@ import { Slider } from '@/components/ui/slider';
 import { 
     Play,
     Pause,
-    RotateCcw,
+    RotateCcw as RefreshCw,
     Info
 } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast, toast } from '@/hooks/use-toast';
 import { 
     Select,
     SelectContent,
