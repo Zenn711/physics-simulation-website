@@ -18,8 +18,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       return savedTheme;
     }
     
-    // Default to dark mode for this application
-    return 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
   useEffect(() => {

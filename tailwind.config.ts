@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -20,16 +19,16 @@ export default {
     },
     extend: {
       colors: {
-        // Update color palette to use black, dark charcoal, and white with proper contrast for text
+        // Update color palette to use black, dark charcoal, and white
         background: {
           DEFAULT: "#000000e6",     // Black with slight transparency
           dark: "#221F26",          // Dark Charcoal
           light: "#FFFFFF"          // Pure White
         },
         foreground: {
-          DEFAULT: "#FFFFFF",       // White text on dark background
+          DEFAULT: "#FFFFFF",       // White text on black
           dark: "#221F26",          // Dark text on light background
-          light: "#000000"          // Black text on white/light background
+          light: "#000000"          // Black text on white
         },
         primary: {
           DEFAULT: "#221F26",       // Dark Charcoal

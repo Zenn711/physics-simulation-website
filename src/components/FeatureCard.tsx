@@ -25,7 +25,7 @@ const FeatureCard = ({
   className,
   category = "Feature",
   position = 'left',
-  color = "from-gray-300 to-white",
+  color = "from-neon-blue to-neon-cyan",
   simulationType = "projectile"
 }: FeatureCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -47,7 +47,7 @@ const FeatureCard = ({
           "border border-white/10 hover:border-white/20",
           "bg-white/5 dark:bg-gray-900/20",
           "w-full h-full", 
-          "transform hover:-translate-y-2 hover:shadow-[0_5px_15px_-5px_rgba(255,255,255,0.1)]",
+          "transform hover:-translate-y-2 hover:shadow-[0_10px_40px_-15px_rgba(6,182,212,0.25)]",
         )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -69,7 +69,7 @@ const FeatureCard = ({
             position === 'center' ? 'text-center' : 
             'text-left'
           )}>
-            <div className={`uppercase text-xs font-medium font-sans tracking-widest mb-1 text-white/70`}>{category}</div>
+            <div className={`uppercase text-xs font-medium font-sans tracking-widest mb-1 bg-gradient-to-r ${color} bg-clip-text text-transparent`}>{category}</div>
             <h3 className="text-lg md:text-xl font-heading font-bold mb-2 text-white">{title}</h3>
             <p className="text-sm text-white/70 mb-3 font-body">{description}</p>
             
@@ -107,18 +107,18 @@ const FeatureCard = ({
             </div>
           )}
           
-          {/* Background accent - more subtle */}
+          {/* Background accent */}
           <div 
             className={`absolute ${
               position === 'left' ? '-left-20' : 
               position === 'right' ? '-right-20' : 
               'left-1/2 -translate-x-1/2'
-            } ${isHovered ? 'opacity-10' : 'opacity-5'} -z-10 transition-opacity duration-500 w-64 h-64 rounded-full bg-white blur-xl`}
+            } ${isHovered ? 'opacity-20' : 'opacity-10'} -z-10 transition-opacity duration-500 w-64 h-64 rounded-full bg-gradient-to-r ${color} blur-2xl`}
           ></div>
           
-          {/* Line accent - more subtle */}
+          {/* Line accent */}
           <div 
-            className={`absolute bottom-0 left-0 h-0.5 bg-white/20 transition-all duration-700 ease-out ${isHovered ? 'w-full' : 'w-12'}`}
+            className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r ${color} transition-all duration-700 ease-out ${isHovered ? 'w-full' : 'w-12'}`}
           ></div>
         </CardContent>
       </Card>

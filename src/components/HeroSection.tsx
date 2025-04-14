@@ -70,16 +70,16 @@ const HeroSection = () => {
       {/* Animated stars background */}
       <div ref={starsRef} className="stars-container absolute inset-0 z-0"></div>
       
-      {/* Background gradient effects - more subtle */}
-      <div className="absolute top-20 -left-40 w-96 h-96 bg-white/5 rounded-full blur-[80px]"></div>
-      <div className="absolute bottom-20 -right-40 w-96 h-96 bg-white/5 rounded-full blur-[80px]"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/3 rounded-full blur-[100px]"></div>
+      {/* Background gradient effects */}
+      <div className="absolute top-20 -left-40 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[100px]"></div>
+      <div className="absolute bottom-20 -right-40 w-96 h-96 bg-neon-purple/10 rounded-full blur-[100px]"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-neon-blue/5 rounded-full blur-[120px]"></div>
       
-      {/* Animated orbital rings - more subtle */}
+      {/* Animated orbital rings */}
       <div className="absolute -z-10 w-full h-full overflow-hidden">
-        <div className="orbital absolute w-[800px] h-[800px] rounded-full border border-white/5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="orbital absolute w-[600px] h-[600px] rounded-full border border-white/5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDuration: '15s' }}></div>
-        <div className="orbital absolute w-[400px] h-[400px] rounded-full border border-white/5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDuration: '10s' }}></div>
+        <div className="orbital absolute w-[800px] h-[800px] rounded-full border border-neon-blue/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="orbital absolute w-[600px] h-[600px] rounded-full border border-neon-cyan/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDuration: '15s' }}></div>
+        <div className="orbital absolute w-[400px] h-[400px] rounded-full border border-soft-blue/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDuration: '10s' }}></div>
       </div>
       
       <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col md:flex-row items-center gap-8 md:gap-16 relative z-10">
@@ -89,7 +89,7 @@ const HeroSection = () => {
             <h1 className="font-display font-tech-tight mb-6 layer-1 text-white leading-tight">
               Interactive
               <br />
-              <span className="text-white">Physics Simulations</span>
+              <span className="text-neon-cyan">Physics Simulations</span>
             </h1>
             
             <p className="text-lg md:text-xl text-white/80 mb-8 max-w-md layer-1 font-body">
@@ -98,7 +98,7 @@ const HeroSection = () => {
             
             <div className="flex flex-wrap gap-4 layer-1">
               <Link to="/simulation">
-                <Button size="lg" className="group hover-scale bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white relative overflow-hidden font-sans">
+                <Button size="lg" className="group hover-scale bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white relative overflow-hidden glow-button font-sans">
                   <span className="relative z-10 flex items-center">
                     Get Started
                     <ChevronRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" size={18} />
@@ -107,7 +107,7 @@ const HeroSection = () => {
               </Link>
               
               <Link to="/simulation">
-                <Button variant="outline" size="lg" className="border-white/20 text-white group hover-scale font-sans">
+                <Button variant="outline" size="lg" className="border-white/20 text-white group hover-scale glow-on-hover font-sans">
                   <Play className="mr-2 transition-transform duration-300 group-hover:scale-110" size={18} />
                   Try Demo
                 </Button>
@@ -117,19 +117,19 @@ const HeroSection = () => {
         </div>
         
         <div className="md:w-1/2 relative flex justify-center">
-          {/* Main circular orb with subtle glow */}
-          <div className="relative w-64 h-64 rounded-full bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-md flex items-center justify-center layer-2">
-            <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/10 to-white/5 blur-md"></div>
+          {/* Main circular orb with glow */}
+          <div className="relative w-64 h-64 rounded-full bg-gradient-to-br from-neon-blue/10 to-neon-cyan/10 backdrop-blur-md animate-pulse-glow flex items-center justify-center layer-2">
+            <div className="absolute inset-4 rounded-full bg-gradient-to-br from-neon-blue/20 to-neon-cyan/20 blur-md"></div>
             <div className="absolute inset-0 rounded-full border border-white/10"></div>
             <Atom className="w-24 h-24 text-white animate-float layer-3" />
           </div>
           
-          {/* Orbiting particles - more subtle */}
+          {/* Orbiting particles */}
           <div className="absolute w-full h-full left-0 top-0">
             {[...Array(8)].map((_, i) => (
               <div 
                 key={i}
-                className="absolute w-2 h-2 rounded-full bg-white animate-orbit-particle"
+                className="absolute w-3 h-3 rounded-full bg-neon-cyan animate-orbit-particle"
                 style={{
                   '--orbit-delay': `${i * 0.5}s`,
                   '--orbit-duration': `${8 + i}s`,
