@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 const HeroSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
+  const waveRef = useRef<SVGSVGElement>(null);
   
   useEffect(() => {
     // Parallax effect
@@ -59,6 +60,27 @@ const HeroSection = () => {
       }
       
       document.addEventListener('mousemove', handleMouseMove);
+      
+      // Initialize wave paths
+      if (waveRef.current) {
+        const updateWavePaths = () => {
+          const wave1 = waveRef.current?.querySelector('.wave1');
+          const wave2 = waveRef.current?.querySelector('.wave2');
+          const wave3 = waveRef.current?.querySelector('.wave3');
+          
+          if (wave1) {
+            wave1.setAttribute('d', "M 0 60 C 150 30, 350 30, 500 60 C 650 90, 850 90, 1000 60 L 1000 200 L 0 200 Z");
+          }
+          if (wave2) {
+            wave2.setAttribute('d', "M 0 70 C 150 40, 350 40, 500 70 C 650 100, 850 100, 1000 70 L 1000 200 L 0 200 Z");
+          }
+          if (wave3) {
+            wave3.setAttribute('d', "M 0 80 C 150 50, 350 50, 500 80 C 650 110, 850 110, 1000 80 L 1000 200 L 0 200 Z");
+          }
+        };
+        
+        updateWavePaths();
+      }
       
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
@@ -112,32 +134,32 @@ const HeroSection = () => {
           ))}
         </div>
         
-        {/* Orbital rings - more pronounced */}
+        {/* Orbital rings - more subtle */}
         <div className="absolute w-full h-full overflow-hidden">
-          <div className="orbital-enhanced absolute w-[800px] h-[800px] rounded-full border-2 border-neon-blue/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="orbital-enhanced absolute w-[600px] h-[600px] rounded-full border-2 border-neon-purple/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDuration: '15s' }}></div>
-          <div className="orbital-enhanced absolute w-[400px] h-[400px] rounded-full border-2 border-neon-cyan/30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDuration: '10s' }}></div>
+          <div className="orbital-enhanced absolute w-[800px] h-[800px] rounded-full border border-neon-blue/5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="orbital-enhanced absolute w-[600px] h-[600px] rounded-full border border-neon-purple/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDuration: '15s' }}></div>
+          <div className="orbital-enhanced absolute w-[400px] h-[400px] rounded-full border border-neon-cyan/15 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDuration: '10s' }}></div>
         </div>
 
-        {/* Dynamic waveform background */}
-        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+        {/* Refined waveform background */}
+        <svg ref={waveRef} className="absolute bottom-0 w-full h-60" preserveAspectRatio="none" viewBox="0 0 1000 200">
           <defs>
             <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(139, 92, 246, 0.05)" />
-              <stop offset="50%" stopColor="rgba(125, 211, 252, 0.07)" />
-              <stop offset="100%" stopColor="rgba(139, 92, 246, 0.05)" />
+              <stop offset="0%" stopColor="rgba(139, 92, 246, 0.03)" />
+              <stop offset="50%" stopColor="rgba(125, 211, 252, 0.05)" />
+              <stop offset="100%" stopColor="rgba(139, 92, 246, 0.03)" />
             </linearGradient>
           </defs>
           <path className="wave wave1" fill="url(#waveGradient)" />
-          <path className="wave wave2" fill="url(#waveGradient)" />
-          <path className="wave wave3" fill="url(#waveGradient)" />
+          <path className="wave wave2" fill="url(#waveGradient)" style={{ opacity: 0.7 }} />
+          <path className="wave wave3" fill="url(#waveGradient)" style={{ opacity: 0.4 }} />
         </svg>
       </div>
 
-      {/* Background gradient effects - enhanced */}
-      <div className="absolute top-20 -left-40 w-96 h-96 bg-neon-purple/10 rounded-full blur-[100px]"></div>
-      <div className="absolute bottom-20 -right-40 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[100px]"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px]"></div>
+      {/* Subtle background gradient effects */}
+      <div className="absolute top-20 -left-40 w-96 h-96 bg-neon-purple/5 rounded-full blur-[120px]"></div>
+      <div className="absolute bottom-20 -right-40 w-96 h-96 bg-neon-cyan/5 rounded-full blur-[120px]"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/3 rounded-full blur-[130px]"></div>
       
       <div className="container mx-auto px-4 py-20 relative z-10 flex flex-col items-center text-center">
         <motion.div 
@@ -147,12 +169,12 @@ const HeroSection = () => {
           variants={containerVariants}
         >
           <motion.div variants={itemVariants} className="mb-3">
-            <span className="uppercase text-xs font-medium tracking-[0.2em] text-white/80 font-sans inline-block py-1 px-3 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
+            <span className="uppercase text-xs font-medium tracking-[0.2em] text-white/70 font-sans inline-block py-1 px-3 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
               Explore Physics
             </span>
           </motion.div>
           
-          <motion.h1 variants={itemVariants} className="font-tech text-4xl md:text-6xl lg:text-7xl mb-6 leading-tight">
+          <motion.h1 variants={itemVariants} className="font-tech text-4xl md:text-6xl lg:text-7xl mb-6 leading-tight tracking-tight">
             <span className="block bg-gradient-to-r from-white via-white/90 to-neon-cyan/90 bg-clip-text text-transparent pb-2">
               Interactive
             </span>
@@ -160,32 +182,32 @@ const HeroSection = () => {
               Physics Simulations
             </span>
             
-            {/* Decorative elements for added visual interest */}
+            {/* Subtle decorative elements */}
             <div className="inline-flex items-center justify-center">
-              <span className="absolute w-2 h-2 bg-neon-cyan rounded-full animate-pulse"></span>
-              <span className="absolute w-32 h-px bg-gradient-to-r from-transparent via-neon-cyan/30 to-transparent"></span>
+              <span className="absolute w-2 h-2 bg-neon-cyan/50 rounded-full animate-pulse"></span>
+              <span className="absolute w-32 h-px bg-gradient-to-r from-transparent via-neon-cyan/20 to-transparent"></span>
             </div>
           </motion.h1>
           
           <motion.p 
             variants={itemVariants} 
-            className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto font-body leading-relaxed"
+            className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto font-body leading-relaxed"
           >
             Discover the fundamentals of physics through immersive, interactive 
             experiences designed for hands-on learning.
           </motion.p>
           
-          <motion.div variants={itemVariants} className="flex flex-wrap gap-4 justify-center">
+          <motion.div variants={itemVariants} className="flex flex-wrap gap-5 justify-center">
             <Link to="/simulation">
               <Button 
                 size="lg" 
-                className="group relative overflow-hidden border-0 bg-gradient-to-br from-neon-purple to-neon-cyan hover:from-neon-cyan hover:to-neon-purple text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-neon-purple/20"
+                className="group relative overflow-hidden border-0 bg-gradient-to-br from-neon-purple/80 to-neon-cyan/80 hover:from-neon-cyan/80 hover:to-neon-purple/80 text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-neon-purple/10"
               >
                 <span className="relative z-10 flex items-center">
                   Get Started
                   <ChevronRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" size={18} />
                 </span>
-                <span className="absolute inset-0 bg-white/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500"></span>
+                <span className="absolute inset-0 bg-white/5 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500"></span>
               </Button>
             </Link>
             
@@ -193,7 +215,7 @@ const HeroSection = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="border-white/20 text-white group relative overflow-hidden hover:bg-white/5 hover:text-white hover:border-white/30 transition-all duration-300"
+                className="border-white/10 text-white group relative overflow-hidden hover:bg-white/5 hover:text-white hover:border-white/20 transition-all duration-300"
               >
                 <Play className="mr-2 transition-transform duration-300 group-hover:scale-110" size={18} />
                 Try Demo
@@ -202,26 +224,26 @@ const HeroSection = () => {
           </motion.div>
         </motion.div>
         
-        {/* Floating physics elements */}
+        {/* Floating physics elements - more subtle */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Floating physics formulas and symbols */}
-          <div className="absolute top-[15%] left-[10%] text-white/10 text-xl rotate-12 font-mono">E=mc²</div>
-          <div className="absolute top-[25%] right-[15%] text-white/10 text-xl -rotate-6 font-mono">F=ma</div>
-          <div className="absolute bottom-[20%] left-[20%] text-white/10 text-xl rotate-3 font-mono">V=IR</div>
-          <div className="absolute bottom-[30%] right-[25%] text-white/10 text-xl -rotate-9 font-mono">PV=nRT</div>
+          <div className="absolute top-[15%] left-[10%] text-white/5 text-xl rotate-12 font-mono">E=mc²</div>
+          <div className="absolute top-[25%] right-[15%] text-white/5 text-xl -rotate-6 font-mono">F=ma</div>
+          <div className="absolute bottom-[20%] left-[20%] text-white/5 text-xl rotate-3 font-mono">V=IR</div>
+          <div className="absolute bottom-[30%] right-[25%] text-white/5 text-xl -rotate-9 font-mono">PV=nRT</div>
           
           {/* Geometric elements */}
-          <div className="absolute top-[30%] left-[25%] w-12 h-12 border border-white/5 rounded-full"></div>
-          <div className="absolute bottom-[40%] right-[10%] w-16 h-16 border border-white/5 rotate-45 transform"></div>
+          <div className="absolute top-[30%] left-[25%] w-12 h-12 border border-white/3 rounded-full"></div>
+          <div className="absolute bottom-[40%] right-[10%] w-16 h-16 border border-white/3 rotate-45 transform"></div>
         </div>
       </div>
       
-      {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
-        <div className="w-8 h-12 rounded-full border-2 border-white/20 flex items-start justify-center p-2">
-          <div className="w-1 h-3 bg-white/50 rounded-full animate-scroll-down"></div>
+      {/* Refined scroll indicator */}
+      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce opacity-70 hover:opacity-100 transition-opacity">
+        <div className="w-8 h-12 rounded-full border-2 border-white/10 flex items-start justify-center p-2">
+          <div className="w-1 h-3 bg-white/30 rounded-full animate-scroll-down"></div>
         </div>
-        <span className="text-white/50 text-xs mt-2">Scroll Down</span>
+        <span className="text-white/40 text-xs mt-2">Scroll Down</span>
       </div>
     </div>
   );

@@ -138,14 +138,14 @@
 }
 
 @keyframes twinkle {
-  0% { opacity: 0.3; }
-  100% { opacity: 1; }
+  0% { opacity: 0.2; }
+  100% { opacity: 0.7; }
 }
 
 /* Particle animation */
 .particle {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   animation: float 15s infinite linear;
 }
@@ -168,9 +168,11 @@
   to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Wave animation */
+/* Refined wave animation */
 .wave {
-  animation: wave 10s infinite linear;
+  animation: wave 15s infinite linear;
+  transform-origin: center;
+  transition: all 0.3s ease-in-out;
 }
 
 .wave1 {
@@ -178,22 +180,22 @@
 }
 
 .wave2 {
-  animation-delay: -3s;
+  animation-delay: -5s;
 }
 
 .wave3 {
-  animation-delay: -6s;
+  animation-delay: -10s;
 }
 
 @keyframes wave {
   0% {
-    d: path("M 0 50 C 150 20, 350 20, 500 50 C 650 80, 850 80, 1000 50 L 1000 200 L 0 200 Z");
+    d: path("M 0 60 C 150 30, 350 30, 500 60 C 650 90, 850 90, 1000 60 L 1000 200 L 0 200 Z");
   }
   50% {
-    d: path("M 0 50 C 150 80, 350 80, 500 50 C 650 20, 850 20, 1000 50 L 1000 200 L 0 200 Z");
+    d: path("M 0 80 C 150 50, 350 50, 500 80 C 650 110, 850 110, 1000 80 L 1000 200 L 0 200 Z");
   }
   100% {
-    d: path("M 0 50 C 150 20, 350 20, 500 50 C 650 80, 850 80, 1000 50 L 1000 200 L 0 200 Z");
+    d: path("M 0 60 C 150 30, 350 30, 500 60 C 650 90, 850 90, 1000 60 L 1000 200 L 0 200 Z");
   }
 }
 
