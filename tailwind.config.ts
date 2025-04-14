@@ -54,7 +54,7 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom colors
+        // Custom colors with improved contrast
         "neon-purple": "hsl(var(--neon-purple))",
         "neon-cyan": "hsl(var(--neon-cyan))",
         "neon-blue": "hsl(var(--neon-blue))",

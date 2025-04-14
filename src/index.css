@@ -5,53 +5,54 @@
 
 @layer base {
   :root {
+    /* Dark theme by default - improved contrast */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 10% 5.9%;
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 240 5.7% 19.9%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --muted: 240 5.7% 19.9%;
+    --muted-foreground: 240 5% 76.9%;
+    --accent: 240 5.7% 19.9%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 72.8% 40.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
+    --border: 240 5.7% 19.9%;
+    --input: 240 5.7% 19.9%;
     --ring: 240 4.9% 83.9%;
     --radius: 0.75rem;
 
-    /* Custom colors */
-    --neon-purple: 265 95% 70%;
-    --neon-cyan: 185 95% 70%;
-    --neon-blue: 210 95% 70%;
+    /* Custom colors - improved contrast */
+    --neon-purple: 265 95% 75%;
+    --neon-cyan: 185 95% 75%;
+    --neon-blue: 210 95% 75%;
     --background-dark: 240 10% 3.9%;
   }
 
   .dark {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
+    --card: 0 0% 98%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
+    --secondary: 240 4.8% 90.9%;
+    --secondary-foreground: 240 5.9% 12%;
+    --muted: 240 4.8% 90.9%;
+    --muted-foreground: 240 3.8% 40.1%;
+    --accent: 240 4.8% 90.9%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
+    --border: 240 5.9% 85%;
+    --input: 240 5.9% 85%;
     --ring: 240 10% 3.9%;
   }
 }
@@ -187,14 +188,14 @@
 .orbital-enhanced {
   animation: orbit 30s linear infinite;
   opacity: 0.8;
-  box-shadow: 0 0 10px 2px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 0 10px 2px rgba(139, 92, 246, 0.3);
 }
 
 .particle {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(125,211,252,0.3) 100%);
-  box-shadow: 0 0 4px rgba(139, 92, 246, 0.5);
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(125,211,252,0.4) 100%);
+  box-shadow: 0 0 6px rgba(139, 92, 246, 0.6);
   animation: float-particle 10s ease-in-out infinite;
 }
 
@@ -205,23 +206,23 @@
 
 .wave1 {
   animation-duration: 15s;
-  opacity: 0.3;
+  opacity: 0.4;
 }
 
 .wave2 {
   animation-duration: 10s;
   animation-delay: -2s;
-  opacity: 0.2;
+  opacity: 0.3;
 }
 
 .wave3 {
   animation-duration: 8s;
   animation-delay: -4s;
-  opacity: 0.1;
+  opacity: 0.2;
 }
 
 .glass-card {
-  @apply backdrop-blur-md bg-white/5 border border-white/10 rounded-lg;
+  @apply backdrop-blur-md bg-white/10 border border-white/20 rounded-lg shadow-lg;
 }
 
 .hover-scale {
