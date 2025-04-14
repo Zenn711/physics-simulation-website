@@ -4,7 +4,6 @@ import { useSearchParams } from 'react-router-dom';
 import SimulationTabs from '@/components/SimulationTabs';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Heading } from 'lucide-react';
 
 const Index = () => {
   const [searchParams] = useSearchParams();
@@ -17,19 +16,14 @@ const Index = () => {
   }, []);
   
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
       <Header />
       
       <main className="flex-1 pt-20">
         <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-center flex items-center gap-3 
-              bg-gradient-to-r from-foreground/80 to-foreground/60 bg-clip-text text-transparent 
-              animate-fade-in-up transition-all duration-300 ease-out">
-              <Heading className="w-8 h-8 text-foreground/70 animate-pulse-glow" />
-              Interactive Physics Simulations
-            </h1>
-          </div>
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center md:text-left text-gradient">
+            Interactive Physics Simulations
+          </h1>
           
           <SimulationTabs defaultTab={defaultTab} />
         </div>
