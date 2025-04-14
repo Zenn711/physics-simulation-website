@@ -1,15 +1,15 @@
 
-import type { Config } from "tailwindcss";
+import { type Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
@@ -20,30 +20,20 @@ export default {
     },
     extend: {
       colors: {
-        // Update color palette to use black, dark charcoal, and white with proper contrast for text
-        background: {
-          DEFAULT: "#000000e6",     // Black with slight transparency
-          dark: "#221F26",          // Dark Charcoal
-          light: "#FFFFFF"          // Pure White
-        },
-        foreground: {
-          DEFAULT: "#FFFFFF",       // White text on dark background
-          dark: "#221F26",          // Dark text on light background
-          light: "#000000"          // Black text on white/light background
-        },
-        primary: {
-          DEFAULT: "#221F26",       // Dark Charcoal
-          foreground: "#FFFFFF"     // White text
-        },
-        secondary: {
-          DEFAULT: "#000000e6",     // Black
-          foreground: "#FFFFFF"     // White text
-        },
-        border: {
-          DEFAULT: "#221F26",       // Dark Charcoal for borders
-        },
+        border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        "background-dark": "hsl(var(--background-dark))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -64,14 +54,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Custom colors
+        "neon-purple": "hsl(var(--neon-purple))",
+        "neon-cyan": "hsl(var(--neon-cyan))",
+        "neon-blue": "hsl(var(--neon-blue))",
+        "soft-blue": "#8AABFF",
+        "soft-gray": "#98A1C0",
       },
-      // Existing radius and other theme extensions remain the same
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      // Keep existing keyframes and animations
+      fontFamily: {
+        sans: ["Inter var", ...fontFamily.sans],
+        display: ["Inter var", ...fontFamily.sans],
+        body: ["Inter var", ...fontFamily.sans],
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -81,57 +80,20 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "pulse-glow": {
-          "0%, 100%": { 
-            boxShadow: "0 0 10px 5px rgba(139, 92, 246, 0.3)",
-            transform: "scale(1)"
-          },
-          "50%": { 
-            boxShadow: "0 0 20px 10px rgba(139, 92, 246, 0.5)",
-            transform: "scale(1.02)"
-          },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
         },
-        "float": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-10px)" },
-        },
-        "fade-in-up": {
-          "0%": { 
-            opacity: "0",
-            transform: "translateY(20px)"
-          },
-          "100%": { 
-            opacity: "1",
-            transform: "translateY(0)"
-          },
-        },
-        "scale-in": {
-          "0%": { 
-            opacity: "0",
-            transform: "scale(0.95)"
-          },
-          "100%": { 
-            opacity: "1",
-            transform: "scale(1)"
-          },
-        },
-        "glow": {
-          "0%, 100%": { 
-            boxShadow: "0 0 5px 2px rgba(139, 92, 246, 0.3)"
-          },
-          "50%": { 
-            boxShadow: "0 0 15px 5px rgba(139, 92, 246, 0.5)"
-          },
+        "fade-out": {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" }
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "pulse-glow": "pulse-glow 3s infinite",
-        "float": "float 6s ease-in-out infinite",
-        "fade-in-up": "fade-in-up 0.6s ease-out",
-        "scale-in": "scale-in 0.4s ease-out",
-        "glow": "glow 2s infinite",
+        "fade-in": "fade-in 0.5s ease-out forwards",
+        "fade-out": "fade-out 0.5s ease-out forwards",
       },
     },
   },
