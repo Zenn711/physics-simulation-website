@@ -1,177 +1,93 @@
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
-import { Info } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 interface OrbitControlsProps {
   isSimulating: boolean;
   showSlingshot: boolean;
 }
 
-const OrbitControls: React.FC<OrbitControlsProps> = ({ isSimulating, showSlingshot }) => {
-  const [sunMass, setSunMass] = useState(100);
-  const [planetMass, setPlanetMass] = useState(10);
-  const [initialDistance, setInitialDistance] = useState(150);
-  const [initialVelocity, setInitialVelocity] = useState(2);
+const OrbitControls: React.FC<OrbitControlsProps> = ({ 
+  isSimulating,
+  showSlingshot
+}) => {
+  // Planet parameters
+  const [planetMass, setPlanetMass] = useState(1.0); // Earth mass ratio
+  const [orbitRadius, setOrbitRadius] = useState(1.0); // 1 AU
+  const [orbitSpeed, setOrbitSpeed] = useState(1.0); // Earth speed ratio
   
   return (
-    <Card className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Simulation Controls</h3>
-      
-      <div className="space-y-4">
-        {/* Sun Mass Control */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <label htmlFor="sun-mass" className="text-sm font-medium mr-2">
-                Star Mass
-              </label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Adjusts the mass of the central star</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {sunMass} units
-            </span>
-          </div>
-          <Slider
-            id="sun-mass"
-            defaultValue={[100]}
-            max={200}
-            min={10}
-            step={5}
-            value={[sunMass]}
-            onValueChange={(value) => setSunMass(value[0])}
-            disabled={isSimulating}
-          />
-        </div>
+    <Card>
+      <CardContent className="pt-6 space-y-4">
+        <h3 className="text-lg font-semibold mb-4">Orbital Parameters</h3>
         
-        {/* Planet Mass Control */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <label htmlFor="planet-mass" className="text-sm font-medium mr-2">
-                Planet Mass
-              </label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Adjusts the mass of the orbiting planet</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label>Planet Mass (Earth = 1)</Label>
+              <span className="text-sm">{planetMass.toFixed(2)}</span>
             </div>
-            <span className="text-sm text-muted-foreground">
-              {planetMass} units
-            </span>
+            <Slider
+              disabled={isSimulating}
+              value={[planetMass]}
+              min={0.1}
+              max={10}
+              step={0.1}
+              onValueChange={(value) => setPlanetMass(value[0])}
+            />
           </div>
-          <Slider
-            id="planet-mass"
-            defaultValue={[10]}
-            max={50}
-            min={1}
-            step={1}
-            value={[planetMass]}
-            onValueChange={(value) => setPlanetMass(value[0])}
-            disabled={isSimulating}
-          />
+          
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label>Orbit Distance (AU)</Label>
+              <span className="text-sm">{orbitRadius.toFixed(2)}</span>
+            </div>
+            <Slider
+              disabled={isSimulating}
+              value={[orbitRadius]}
+              min={0.3}
+              max={5}
+              step={0.1}
+              onValueChange={(value) => setOrbitRadius(value[0])}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label>Orbit Speed (Earth = 1)</Label>
+              <span className="text-sm">{orbitSpeed.toFixed(2)}</span>
+            </div>
+            <Slider
+              disabled={isSimulating}
+              value={[orbitSpeed]}
+              min={0.1}
+              max={3}
+              step={0.1}
+              onValueChange={(value) => setOrbitSpeed(value[0])}
+            />
+          </div>
+          
+          <div className="pt-2 border-t border-gray-200 dark:border-gray-800">
+            <h4 className="text-sm font-medium mb-3">Advanced Options</h4>
+            
+            <div className="flex items-center space-x-2 py-2">
+              <Switch id="slingshot" checked={showSlingshot} disabled />
+              <Label htmlFor="slingshot" className={isSimulating ? "text-gray-500" : ""}>
+                Gravitational Slingshot
+              </Label>
+            </div>
+            
+            {showSlingshot && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Reset simulation to change this option
+              </p>
+            )}
+          </div>
         </div>
-        
-        {/* Initial Distance Control */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <label htmlFor="initial-distance" className="text-sm font-medium mr-2">
-                Orbital Distance
-              </label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Sets the initial distance between bodies</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {initialDistance} units
-            </span>
-          </div>
-          <Slider
-            id="initial-distance"
-            defaultValue={[150]}
-            max={250}
-            min={50}
-            step={5}
-            value={[initialDistance]}
-            onValueChange={(value) => setInitialDistance(value[0])}
-            disabled={isSimulating}
-          />
-        </div>
-        
-        {/* Initial Velocity Control */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <label htmlFor="initial-velocity" className="text-sm font-medium mr-2">
-                Initial Velocity
-              </label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Sets the initial velocity of the orbiting body</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {initialVelocity.toFixed(1)} units
-            </span>
-          </div>
-          <Slider
-            id="initial-velocity"
-            defaultValue={[2]}
-            max={5}
-            min={0.5}
-            step={0.1}
-            value={[initialVelocity]}
-            onValueChange={(value) => setInitialVelocity(value[0])}
-            disabled={isSimulating}
-          />
-        </div>
-        
-        {/* Slingshot Configuration - only shown when slingshot is enabled */}
-        {showSlingshot && (
-          <div className="space-y-2 pt-2 border-t border-gray-800">
-            <h4 className="text-sm font-medium">Slingshot Configuration</h4>
-            <div className="text-xs text-muted-foreground">
-              Adjust planet parameters to create gravity assist maneuvers
-            </div>
-          </div>
-        )}
-      </div>
+      </CardContent>
     </Card>
   );
 };

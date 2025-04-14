@@ -1,85 +1,47 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
-import { Info } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 const OrbitInfoCard = () => {
   return (
-    <Card className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Orbital Physics</h3>
-      
-      <div className="space-y-4 text-sm">
-        <div className="space-y-1">
-          <h4 className="font-medium flex items-center">
-            Kepler's Laws
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Three laws describing orbital motion discovered by Johannes Kepler</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </h4>
-          <p className="text-muted-foreground">
-            Planets move in elliptical orbits with the sun at one focus.
+    <Card>
+      <CardContent className="pt-6">
+        <h3 className="text-lg font-semibold mb-2">Orbital Mechanics</h3>
+        
+        <div className="space-y-4 text-sm">
+          <p>
+            This simulation demonstrates Newton's law of universal gravitation and Kepler's laws of planetary motion.
           </p>
-        </div>
-        
-        <div className="space-y-1">
-          <h4 className="font-medium flex items-center">
-            Orbital Terms
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Special points in an orbit</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </h4>
-          <ul className="list-disc list-inside text-muted-foreground">
-            <li>Perihelion: Closest approach to the sun</li>
-            <li>Aphelion: Furthest distance from the sun</li>
-            <li>Escape Velocity: Speed needed to escape gravity</li>
-          </ul>
-        </div>
-        
-        <div className="space-y-1">
-          <h4 className="font-medium flex items-center">
-            Newton's Law of Gravitation
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>F = G(m₁m₂)/r²</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </h4>
-          <p className="text-muted-foreground">
-            Gravity is proportional to the product of masses and inversely proportional to distance squared.
-          </p>
-        </div>
-        
-        <div className="pt-2 border-t border-gray-800">
-          <div className="text-xs text-muted-foreground">
-            <strong>Tip:</strong> Try different initial velocities to see how they affect orbital shapes.
+          
+          <div>
+            <h4 className="text-md font-medium">Newton's Law of Gravitation:</h4>
+            <p className="mt-1 font-mono bg-gray-100 dark:bg-gray-800 p-2 rounded">
+              F = G(m₁m₂)/r²
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              The gravitational force between two objects is proportional to their masses and inversely proportional to the square of the distance between them.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="text-md font-medium">Kepler's Laws:</h4>
+            <ol className="list-decimal list-inside space-y-2 mt-1">
+              <li>Planets move in elliptical orbits with the sun at one focus</li>
+              <li>A line connecting a planet and the sun sweeps out equal areas in equal times</li>
+              <li>The square of the orbital period is proportional to the cube of the semi-major axis</li>
+            </ol>
+          </div>
+          
+          <div className="border-t border-gray-200 dark:border-gray-800 pt-3 mt-4">
+            <h4 className="text-md font-medium">Try This:</h4>
+            <ul className="list-disc list-inside space-y-1 mt-1 text-xs">
+              <li>Observe how changing the orbit distance affects orbital speed</li>
+              <li>Turn on vectors to see gravitational forces and velocity</li>
+              <li>Watch how a comet's trajectory changes during a gravitational slingshot</li>
+            </ul>
           </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };
