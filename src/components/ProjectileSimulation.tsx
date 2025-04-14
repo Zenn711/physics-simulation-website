@@ -147,12 +147,7 @@ function ProjectileSimulation() {
                 const y = vy * newTime * (1 - airResistance * newTime) - 0.5 * currGravity * newTime * newTime;
 
                 const newPosition = { x, y };
-                setPosition(newPosition);
                 
-                if (showTrail) {
-                    setTrajectory((prev) => [...prev, newPosition]);
-                }
-
                 // Check if projectile has landed (y <= 0)
                 if (y <= 0) {
                     setHasLanded(true);
@@ -167,8 +162,20 @@ function ProjectileSimulation() {
                     const tLand = (-b - Math.sqrt(discriminant)) / (2 * a);
                     const xLand = vx * tLand * (1 - airResistance * tLand);
                     
+                    // Set position to be exactly on the ground (y = 0)
                     setPosition({ x: xLand, y: 0 });
+                    
+                    if (showTrail) {
+                        setTrajectory(prev => [...prev, { x: xLand, y: 0 }]);
+                    }
+                    
                     return newTime;
+                }
+
+                setPosition(newPosition);
+                
+                if (showTrail) {
+                    setTrajectory((prev) => [...prev, newPosition]);
                 }
 
                 return newTime;
@@ -265,19 +272,25 @@ function ProjectileSimulation() {
                 <div className="flex space-x-2">
                     <button 
                         onClick={() => setEnvironment('earth')}
-                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'earth' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`px-3 py-1 rounded-md ${environment === 'earth' 
+                            ? 'bg-primary text-white border border-transparent' 
+                            : 'bg-gray-200 dark:bg-gray-700 text-foreground border border-transparent'}`}
                     >
                         Earth
                     </button>
                     <button 
                         onClick={() => setEnvironment('moon')}
-                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'moon' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`px-3 py-1 rounded-md ${environment === 'moon' 
+                            ? 'bg-primary text-white border border-transparent' 
+                            : 'bg-gray-200 dark:bg-gray-700 text-foreground border border-transparent'}`}
                     >
                         Moon
                     </button>
                     <button 
                         onClick={() => setEnvironment('mars')}
-                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'mars' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`px-3 py-1 rounded-md ${environment === 'mars' 
+                            ? 'bg-primary text-white border border-transparent' 
+                            : 'bg-gray-200 dark:bg-gray-700 text-foreground border border-transparent'}`}
                     >
                         Mars
                     </button>
@@ -442,13 +455,17 @@ function ProjectileSimulation() {
                             <div className="flex items-center space-x-2">
                                 <button 
                                     onClick={() => setShowTrail(!showTrail)}
-                                    className={`px-3 py-1 text-sm rounded-md text-foreground ${showTrail ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                                    className={`px-3 py-1 text-sm rounded-md ${showTrail 
+                                        ? 'bg-primary text-white border border-transparent' 
+                                        : 'bg-gray-200 dark:bg-gray-700 text-foreground border border-transparent'}`}
                                 >
                                     {showTrail ? 'Hide Trail' : 'Show Trail'}
                                 </button>
                                 <button 
                                     onClick={() => setAutoScale(!autoScale)}
-                                    className={`px-3 py-1 text-sm rounded-md text-foreground ${autoScale ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                                    className={`px-3 py-1 text-sm rounded-md ${autoScale 
+                                        ? 'bg-primary text-white border border-transparent' 
+                                        : 'bg-gray-200 dark:bg-gray-700 text-foreground border border-transparent'}`}
                                 >
                                     {autoScale ? 'Auto Scale: ON' : 'Auto Scale: OFF'}
                                 </button>
