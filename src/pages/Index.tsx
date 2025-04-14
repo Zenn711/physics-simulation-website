@@ -16,12 +16,12 @@ const Index = () => {
   }, []);
   
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header />
       
       <main className="flex-1 pt-20">
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center md:text-left text-gradient">
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center md:text-left">
             Interactive Physics Simulations
           </h1>
           

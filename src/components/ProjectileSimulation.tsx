@@ -66,9 +66,11 @@ function ProjectileSimulation() {
         setParams(prev => ({ ...prev, velocity: newValue[0] }));
     };
     
-    const handleLaunch = ({}) => {
-        // This is a fix for the TS2554 error: Expected 1-3 arguments, but got 0
-        // Line 196 is modified to pass an argument to handleLaunch()
+    const handleLaunch = (event = {}) => {
+        setIsRunning(true);
+        setHasLanded(false);
+        resetSimulation();
+        setIsRunning(true);
     };
     
     // Toggle simulation state
@@ -95,7 +97,7 @@ function ProjectileSimulation() {
             const newScale = Math.min(xScale, yScale, 1);
             setViewScale(newScale > 0 ? 1/newScale : 1);
         }
-    }, [params, environment, basescale, autoScale, width, height, environments]);
+    }, [params, environment, basescale, width, height, environments]);
     
     // Animation logic
     useEffect(() => {
@@ -228,23 +230,23 @@ function ProjectileSimulation() {
     return (
         <div className="flex flex-col items-center w-full p-4">
             <div className="w-full flex flex-wrap items-center justify-between mb-4">
-                <h2 className="text-xl font-bold">Projectile Motion Simulator</h2>
+                <h2 className="text-xl font-bold text-foreground">Projectile Motion Simulator</h2>
                 <div className="flex space-x-2">
                     <button 
                         onClick={() => setEnvironment('earth')}
-                        className={`px-3 py-1 rounded-md ${environment === 'earth' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'earth' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
                     >
                         Earth
                     </button>
                     <button 
                         onClick={() => setEnvironment('moon')}
-                        className={`px-3 py-1 rounded-md ${environment === 'moon' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'moon' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
                     >
                         Moon
                     </button>
                     <button 
                         onClick={() => setEnvironment('mars')}
-                        className={`px-3 py-1 rounded-md ${environment === 'mars' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                        className={`px-3 py-1 rounded-md text-foreground ${environment === 'mars' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
                     >
                         Mars
                     </button>
@@ -378,8 +380,8 @@ function ProjectileSimulation() {
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <div className="flex justify-between">
-                                    <span>Launch Angle (°)</span>
-                                    <span>{params.angle}°</span>
+                                    <span className="text-foreground">Launch Angle (°)</span>
+                                    <span className="text-foreground">{params.angle}°</span>
                                 </div>
                                 <Slider
                                     defaultValue={[45]}
@@ -393,8 +395,8 @@ function ProjectileSimulation() {
                             
                             <div className="space-y-2">
                                 <div className="flex justify-between">
-                                    <span>Initial Velocity (m/s)</span>
-                                    <span>{params.velocity} m/s</span>
+                                    <span className="text-foreground">Initial Velocity (m/s)</span>
+                                    <span className="text-foreground">{params.velocity} m/s</span>
                                 </div>
                                 <Slider
                                     defaultValue={[20]}
@@ -409,13 +411,13 @@ function ProjectileSimulation() {
                             <div className="flex items-center space-x-2">
                                 <button 
                                     onClick={() => setShowTrail(!showTrail)}
-                                    className={`px-3 py-1 text-sm rounded-md ${showTrail ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                                    className={`px-3 py-1 text-sm rounded-md text-foreground ${showTrail ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
                                 >
                                     {showTrail ? 'Hide Trail' : 'Show Trail'}
                                 </button>
                                 <button 
                                     onClick={() => setAutoScale(!autoScale)}
-                                    className={`px-3 py-1 text-sm rounded-md ${autoScale ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+                                    className={`px-3 py-1 text-sm rounded-md text-foreground ${autoScale ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
                                 >
                                     {autoScale ? 'Auto Scale: ON' : 'Auto Scale: OFF'}
                                 </button>
@@ -428,20 +430,20 @@ function ProjectileSimulation() {
                     <CardContent className="pt-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium">Environment</p>
-                                <p className="text-lg font-bold capitalize">{environment}</p>
+                                <p className="text-sm font-medium text-foreground-light dark:text-foreground">Environment</p>
+                                <p className="text-lg font-bold capitalize text-foreground-light dark:text-foreground">{environment}</p>
                             </div>
                             <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium">Gravity</p>
-                                <p className="text-lg font-bold">{environments[environment].gravity} m/s²</p>
+                                <p className="text-sm font-medium text-foreground-light dark:text-foreground">Gravity</p>
+                                <p className="text-lg font-bold text-foreground-light dark:text-foreground">{environments[environment].gravity} m/s²</p>
                             </div>
                             <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium">Max Height</p>
-                                <p className="text-lg font-bold">{maxHeight.toFixed(2)} m</p>
+                                <p className="text-sm font-medium text-foreground-light dark:text-foreground">Max Height</p>
+                                <p className="text-lg font-bold text-foreground-light dark:text-foreground">{maxHeight.toFixed(2)} m</p>
                             </div>
                             <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                                <p className="text-sm font-medium">Range</p>
-                                <p className="text-lg font-bold">{range.toFixed(2)} m</p>
+                                <p className="text-sm font-medium text-foreground-light dark:text-foreground">Range</p>
+                                <p className="text-lg font-bold text-foreground-light dark:text-foreground">{range.toFixed(2)} m</p>
                             </div>
                         </div>
                     </CardContent>
@@ -453,7 +455,7 @@ function ProjectileSimulation() {
                     onClick={toggleSimulation} 
                     variant="outline"
                     size="lg"
-                    className="space-x-2"
+                    className="space-x-2 text-foreground"
                 >
                     {isRunning ? <Pause size={18} /> : <Play size={18} />}
                     <span>{isRunning ? "Pause" : "Play"}</span>
@@ -463,7 +465,7 @@ function ProjectileSimulation() {
                     onClick={resetSimulation} 
                     variant="outline"
                     size="lg"
-                    className="space-x-2"
+                    className="space-x-2 text-foreground"
                 >
                     <RefreshCw size={18} />
                     <span>Reset</span>
