@@ -9,7 +9,8 @@ import {
   ArrowRight,
   Orbit,
   Waves,
-  Droplets
+  Droplets,
+  Planet
 } from 'lucide-react';
 import FeatureCard from './FeatureCard';
 import ScrollReveal from './ScrollReveal';
@@ -62,11 +63,20 @@ const FeaturesSection = () => {
       simulationType: "fluid"
     },
     {
+      icon: <Planet className="feature-icon" />,
+      title: "Orbit & Gravity",
+      description: "Simulate planetary orbits and gravitational forces, visualizing elliptical paths and Kepler's laws in action.",
+      category: "Astronomy",
+      position: 'right' as const,
+      color: "from-neon-purple to-neon-cyan",
+      simulationType: "orbit"
+    },
+    {
       icon: <Atom className="feature-icon" />,
       title: "Interactive Learning",
       description: "Adjust parameters and see immediate results, making abstract concepts concrete and tangible.",
       category: "Education",
-      position: 'right' as const,
+      position: 'left' as const,
       color: "from-neon-purple to-neon-cyan",
       simulationType: "projectile" // Default to projectile for general features
     }

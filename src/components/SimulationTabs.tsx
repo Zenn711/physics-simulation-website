@@ -7,6 +7,7 @@ import SpringSimulation from './SpringSimulation';
 import WavePropagationSimulation from './WavePropagationSimulation';
 import ProjectileSimulation from './ProjectileSimulation';
 import FluidDynamicsSimulation from './FluidDynamicsSimulation';
+import OrbitGravitySimulation from './OrbitGravitySimulation';
 
 const SimulationTabs = ({ defaultTab = 'projectile' }) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
@@ -55,6 +56,12 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
           >
             Fluid Dynamics
           </TabsTrigger>
+          <TabsTrigger
+            value="orbit"
+            className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none"
+          >
+            Orbit & Gravity
+          </TabsTrigger>
         </TabsList>
       </div>
 
@@ -76,6 +83,10 @@ const SimulationTabs = ({ defaultTab = 'projectile' }) => {
       
       <TabsContent value="fluid" className="mt-0">
         <FluidDynamicsSimulation />
+      </TabsContent>
+      
+      <TabsContent value="orbit" className="mt-0">
+        <OrbitGravitySimulation />
       </TabsContent>
     </Tabs>
   );

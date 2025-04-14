@@ -1,8 +1,19 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Play, Pause, RefreshCw } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useState, useEffect, useRef } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import { 
+  Play, 
+  Pause, 
+  RefreshCw, 
+  Info, 
+  FastForward, 
+  Rocket, 
+  Moon,
+  Earth
+} from 'lucide-react';
+import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 function ProjectileSimulation() {
     // Simulation parameters
@@ -226,6 +237,14 @@ function ProjectileSimulation() {
         }
         return null;
     };
+
+    const handleToast = () => {
+        toast({
+          title: "Simulation Info",
+          description: "Projectile motion follows a parabolic path due to constant acceleration from gravity.",
+          variant: "default",
+        });
+      };
 
     return (
         <div className="flex flex-col items-center w-full p-4">
