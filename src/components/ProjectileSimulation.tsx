@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card } from '@/components/ui/card';
+
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { 
@@ -77,7 +78,7 @@ function ProjectileSimulation() {
         setParams(prev => ({ ...prev, velocity: newValue[0] }));
     };
     
-    const handleLaunch = (event = {}) => {
+    const handleLaunch = () => {
         setIsRunning(true);
         setHasLanded(false);
         resetSimulation();
@@ -244,7 +245,7 @@ function ProjectileSimulation() {
           description: "Projectile motion follows a parabolic path due to constant acceleration from gravity.",
           variant: "default",
         });
-      };
+    };
 
     return (
         <div className="flex flex-col items-center w-full p-4">

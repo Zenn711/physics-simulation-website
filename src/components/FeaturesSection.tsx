@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { 
   Compass, 
@@ -10,7 +9,7 @@ import {
   Orbit,
   Waves,
   Droplets,
-  Planet
+  Globe
 } from 'lucide-react';
 import FeatureCard from './FeatureCard';
 import ScrollReveal from './ScrollReveal';
@@ -63,7 +62,7 @@ const FeaturesSection = () => {
       simulationType: "fluid"
     },
     {
-      icon: <Planet className="feature-icon" />,
+      icon: <Globe className="feature-icon" />,
       title: "Orbit & Gravity",
       description: "Simulate planetary orbits and gravitational forces, visualizing elliptical paths and Kepler's laws in action.",
       category: "Astronomy",

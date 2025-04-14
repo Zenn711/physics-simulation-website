@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Compass, Activity, Zap, Waves, Droplets, Planet } from 'lucide-react';
+import { Compass, Activity, Zap, Waves, Droplets, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ScrollReveal from './ScrollReveal';
 
@@ -79,7 +78,7 @@ const SimulationPreviewSection = () => {
       tabValue: "fluid"
     },
     {
-      icon: <Planet size={20} />,
+      icon: <Globe size={20} />,
       title: "Orbit & Gravity",
       color: "from-neon-purple to-neon-cyan",
       animationDelay: 6,

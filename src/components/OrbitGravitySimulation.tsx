@@ -7,9 +7,9 @@ import {
   Play, 
   Pause, 
   RefreshCw, 
-  Fast, 
   Info, 
-  Planet, 
+  FastForward, 
+  Globe, 
   Sparkles,
   PenTool
 } from 'lucide-react';
