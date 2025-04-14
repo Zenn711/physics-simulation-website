@@ -37,7 +37,7 @@ export const useFluidComparison = ({ laminarRef, turbulentRef }: ComparisonRefs)
         vx: 0.7 + Math.random() * 0.5, // Base velocity
         vy: isTurbulent ? (Math.random() - 0.5) * 0.4 : (Math.random() - 0.5) * 0.1,
         age: Math.random() * 100,
-        maxAge: 150 + Math.random() * 150, // Increased maxAge to travel full width
+        maxAge: 350 + Math.random() * 150, // Increased maxAge to ensure particles travel full width
         hue: 210 + Math.random() * 30,
         turbulent: isTurbulent
       });
@@ -77,7 +77,7 @@ export const useFluidComparison = ({ laminarRef, turbulentRef }: ComparisonRefs)
     if (!ctx) return;
     
     // Clear with semi-transparent overlay for trail effect
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.03)'; // Reduced opacity to create longer, more visible trails
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Draw obstacle
@@ -105,7 +105,7 @@ export const useFluidComparison = ({ laminarRef, turbulentRef }: ComparisonRefs)
       p.age += 1;
       
       // Reset aged-out particles
-      if (p.age > p.maxAge) {
+      if (p.age > p.maxAge || p.x > canvas.width) {
         // Reset to left edge with random position
         p.x = Math.random() * 20;
         p.y = Math.random() * canvas.height;
@@ -157,15 +157,8 @@ export const useFluidComparison = ({ laminarRef, turbulentRef }: ComparisonRefs)
         p.x += p.vx;
         p.y += p.vy;
         
-        // Handle boundaries - ensure particles flow all the way across
-        if (p.x > canvas.width) {
-          // Reset to left edge when reaching right edge
-          p.x = Math.random() * 20;
-          p.y = Math.random() * canvas.height;
-          p.age = 0;
-          continue;
-        }
-        
+        // Handle boundaries - ONLY reset when completely off screen to the right
+        // Don't reset particles that are still visible
         if (p.x < 0) {
           p.x = 0;
           p.vx = Math.abs(p.vx);
@@ -182,8 +175,8 @@ export const useFluidComparison = ({ laminarRef, turbulentRef }: ComparisonRefs)
         }
       }
       
-      // Draw particle
-      const alpha = 1 - p.age / p.maxAge;
+      // Draw particle with stronger visibility
+      const alpha = 0.9 - 0.7 * (p.age / p.maxAge); // Higher alpha values for better visibility
       const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
       
       ctx.beginPath();
