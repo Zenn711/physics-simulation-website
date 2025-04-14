@@ -9,7 +9,7 @@ import {
   RefreshCw, 
   Info, 
   FastForward, 
-  Globe, 
+  Globe,
   Sparkles,
   PenTool
 } from 'lucide-react';
@@ -66,7 +66,7 @@ const OrbitGravitySimulation = () => {
                   onClick={() => setActiveView('simulation')}
                   className={activeView === 'simulation' ? 'bg-secondary' : ''}
                 >
-                  <Planet className="mr-1 h-4 w-4" />
+                  <Globe className="mr-1 h-4 w-4" />
                   Simulation
                 </Button>
                 
@@ -176,7 +176,7 @@ const OrbitGravitySimulation = () => {
                   </TooltipProvider>
                   
                   <div className="flex items-center space-x-2 ml-auto">
-                    <Fast className="h-4 w-4 text-muted-foreground" />
+                    <FastForward className="h-4 w-4 text-muted-foreground" />
                     <div className="w-24">
                       <Slider
                         defaultValue={[1]}

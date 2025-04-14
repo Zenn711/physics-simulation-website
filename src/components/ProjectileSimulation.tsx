@@ -1,20 +1,27 @@
-
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { 
-  Play, 
-  Pause, 
-  RefreshCw, 
-  Info, 
-  FastForward, 
-  Rocket, 
-  Moon,
-  Earth
+    Play,
+    Pause,
+    RotateCcw,
+    Info
 } from 'lucide-react';
-import { toast } from "@/hooks/use-toast";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from '@/components/ui/use-toast';
+import { 
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 function ProjectileSimulation() {
     // Simulation parameters
@@ -78,11 +85,14 @@ function ProjectileSimulation() {
         setParams(prev => ({ ...prev, velocity: newValue[0] }));
     };
     
-    const handleLaunch = () => {
+    const handleLaunch = (event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement> = {} as React.MouseEvent<HTMLButtonElement>) => {
+        if (event && 'preventDefault' in event) {
+            event.preventDefault();
+        }
+        
         setIsRunning(true);
         setHasLanded(false);
         resetSimulation();
-        setIsRunning(true);
     };
     
     // Toggle simulation state
