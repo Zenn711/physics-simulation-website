@@ -5,7 +5,7 @@ import { Atom, Github, Twitter, Linkedin, Mail } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="border-t border-gray-200 dark:border-gray-800 py-12 relative">
+    <footer className="border-t border-gray-800 py-12 relative">
       {/* Background gradient effect */}
       <div className="absolute -inset-10 bg-gradient-to-b from-neon-purple/5 to-transparent blur-3xl -z-10"></div>
       
@@ -17,7 +17,7 @@ const Footer = () => {
               <Atom className="h-8 w-8 text-neon-purple" />
               <span className="text-2xl font-display font-bold">Physics Playground</span>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-4 font-body">
+            <p className="text-gray-300 mb-4 font-body">
               Interactive physics simulations that make learning engaging and intuitive. 
               Explore complex concepts through hands-on experimentation.
             </p>
@@ -42,22 +42,22 @@ const Footer = () => {
             <h3 className="font-heading font-bold mb-4">Explore</h3>
             <ul className="space-y-2 font-body">
               <li>
-                <Link to="/simulation" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+                <Link to="/simulation" className="text-gray-300 hover:text-neon-cyan transition-colors">
                   Simulations
                 </Link>
               </li>
               <li>
-                <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+                <a href="#features" className="text-gray-300 hover:text-neon-cyan transition-colors">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+                <a href="#" className="text-gray-300 hover:text-neon-cyan transition-colors">
                   About Us
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+                <a href="#" className="text-gray-300 hover:text-neon-cyan transition-colors">
                   Contact
                 </a>
               </li>
@@ -69,17 +69,17 @@ const Footer = () => {
             <h3 className="font-heading font-bold mb-4">Simulations</h3>
             <ul className="space-y-2 font-body">
               <li>
-                <Link to="/simulation?tab=projectile" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+                <Link to="/simulation?tab=projectile" className="text-gray-300 hover:text-neon-cyan transition-colors">
                   Projectile Motion
                 </Link>
               </li>
               <li>
-                <Link to="/simulation?tab=pendulum" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+                <Link to="/simulation?tab=pendulum" className="text-gray-300 hover:text-neon-cyan transition-colors">
                   Pendulum
                 </Link>
               </li>
               <li>
-                <Link to="/simulation?tab=spring" className="text-gray-600 dark:text-gray-300 hover:text-neon-purple dark:hover:text-neon-cyan transition-colors">
+                <Link to="/simulation?tab=spring" className="text-gray-300 hover:text-neon-cyan transition-colors">
                   Spring Force
                 </Link>
               </li>
@@ -87,7 +87,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm font-body">
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm font-body">
           <p>© {new Date().getFullYear()} Physics Playground. All rights reserved.</p>
         </div>
       </div>
