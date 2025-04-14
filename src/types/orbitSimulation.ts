@@ -16,3 +16,11 @@ export interface CelestialBody {
   trail: Array<{x: number, y: number}>;
   name: string;
 }
+
+export interface OrbitData {
+  gravitationalForce: number;
+  orbitalPeriod: number;
+  currentDistance: number;
+  currentVelocity: number;
+  bodies: CelestialBody[];
+}

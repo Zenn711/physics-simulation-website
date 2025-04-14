@@ -23,6 +23,8 @@ import OrbitControls from './orbit/OrbitControls';
 import OrbitInfoCard from './orbit/OrbitInfoCard';
 import OrbitVisualization from './orbit/OrbitVisualization';
 import OrbitLearnContent from './orbit/OrbitLearnContent';
+import OrbitDataPanel from './orbit/OrbitDataPanel';
+import { OrbitParams, OrbitData } from '@/types/orbitSimulation';
 
 const OrbitGravitySimulation = () => {
   const [isSimulating, setIsSimulating] = useState(false);
@@ -31,6 +33,12 @@ const OrbitGravitySimulation = () => {
   const [showVectors, setShowVectors] = useState(true);
   const [showSlingshot, setShowSlingshot] = useState(false);
   const [activeView, setActiveView] = useState<'simulation' | 'learn'>('simulation');
+  const [orbitParams, setOrbitParams] = useState<OrbitParams>({
+    mass: 1.0,
+    distance: 1.0,
+    velocity: 1.0
+  });
+  const [orbitData, setOrbitData] = useState<OrbitData | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   
@@ -42,12 +50,30 @@ const OrbitGravitySimulation = () => {
   // Reset simulation
   const resetSimulation = () => {
     setIsSimulating(false);
-    // Reset logic will be implemented in OrbitVisualization
+    setOrbitData(null);
+    // Reset happens in OrbitVisualization when parameters change
   };
 
   // Update time speed
   const handleTimeSpeedChange = (value: number[]) => {
     setTimeSpeed(value[0]);
+  };
+
+  // Update orbit parameters
+  const handleUpdateParams = (params: OrbitParams) => {
+    setOrbitParams(params);
+  };
+
+  // Handle orbit data updates
+  const handleDataUpdate = (data: OrbitData) => {
+    setOrbitData(data);
+  };
+
+  // Handle slingshot toggle
+  const handleToggleSlingshot = () => {
+    if (!isSimulating) {
+      setShowSlingshot(!showSlingshot);
+    }
   };
 
   return (
@@ -92,6 +118,8 @@ const OrbitGravitySimulation = () => {
                     showTrails={showTrails}
                     showVectors={showVectors}
                     showSlingshot={showSlingshot}
+                    orbitParams={orbitParams}
+                    onDataUpdate={handleDataUpdate}
                   />
                 </div>
                 
@@ -162,7 +190,8 @@ const OrbitGravitySimulation = () => {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => setShowSlingshot(!showSlingshot)}
+                          onClick={handleToggleSlingshot}
+                          disabled={isSimulating}
                           className={showSlingshot ? 'bg-secondary/50' : ''}
                         >
                           <Sparkles className="h-4 w-4 mr-1" />
@@ -170,7 +199,7 @@ const OrbitGravitySimulation = () => {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Enable gravitational slingshot effect</p>
+                        <p>{isSimulating ? 'Pause to enable slingshot' : 'Enable gravitational slingshot effect'}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -206,7 +235,9 @@ const OrbitGravitySimulation = () => {
               <OrbitControls
                 isSimulating={isSimulating}
                 showSlingshot={showSlingshot}
+                onUpdateParams={handleUpdateParams}
               />
+              <OrbitDataPanel data={orbitData} />
               <OrbitInfoCard />
             </>
           )}

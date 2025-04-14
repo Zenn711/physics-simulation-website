@@ -1,24 +1,36 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { OrbitParams } from '@/types/orbitSimulation';
 
 interface OrbitControlsProps {
   isSimulating: boolean;
   showSlingshot: boolean;
+  onUpdateParams: (params: OrbitParams) => void;
 }
 
 const OrbitControls: React.FC<OrbitControlsProps> = ({ 
   isSimulating,
-  showSlingshot
+  showSlingshot,
+  onUpdateParams
 }) => {
   // Planet parameters
   const [planetMass, setPlanetMass] = useState(1.0); // Earth mass ratio
   const [orbitRadius, setOrbitRadius] = useState(1.0); // 1 AU
   const [orbitSpeed, setOrbitSpeed] = useState(1.0); // Earth speed ratio
   
+  // Update parent component when parameters change
+  useEffect(() => {
+    onUpdateParams({
+      mass: planetMass,
+      distance: orbitRadius,
+      velocity: orbitSpeed
+    });
+  }, [planetMass, orbitRadius, orbitSpeed, onUpdateParams]);
+
   return (
     <Card>
       <CardContent className="pt-6 space-y-4">

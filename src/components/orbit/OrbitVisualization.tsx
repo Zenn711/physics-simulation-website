@@ -1,5 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
+import { OrbitParams, CelestialBody, OrbitData } from '@/types/orbitSimulation';
 
 interface OrbitVisualizationProps {
   isSimulating: boolean;
@@ -7,18 +8,8 @@ interface OrbitVisualizationProps {
   showTrails: boolean;
   showVectors: boolean;
   showSlingshot: boolean;
-}
-
-interface CelestialBody {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  mass: number;
-  radius: number;
-  color: string;
-  trail: Array<{x: number, y: number}>;
-  name: string;
+  orbitParams: OrbitParams;
+  onDataUpdate?: (data: OrbitData) => void;
 }
 
 const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
@@ -27,6 +18,8 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
   showTrails,
   showVectors,
   showSlingshot,
+  orbitParams,
+  onDataUpdate
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestIdRef = useRef<number | null>(null);
@@ -37,9 +30,15 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
   const G = 6.67430e-11; // Gravitational constant
   const scaleFactor = 1e9; // Scale factor to make visuals reasonable
   const timeStep = 3600 * 24; // Time step in seconds (1 day)
+  const earthMass = 5.972e24; // Earth mass in kg
+  const sunMass = 1.989e30; // Sun mass in kg
+  const AU = 149.6e9; // Astronomical unit in meters
+  const earthVelocity = 29.78e3; // Earth orbital velocity in m/s
 
-  // Initialize the simulation
+  // Initialize the simulation when parameters change or reset is triggered
   useEffect(() => {
+    if (isSimulating) return; // Only reinitialize when not simulating
+    
     initializeSimulation();
     
     return () => {
@@ -47,7 +46,7 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
         cancelAnimationFrame(requestIdRef.current);
       }
     };
-  }, [showSlingshot]);
+  }, [showSlingshot, orbitParams.mass, orbitParams.distance, orbitParams.velocity, isSimulating]);
 
   // Handle simulation running state
   useEffect(() => {
@@ -55,6 +54,17 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
   }, [isSimulating]);
 
   const initializeSimulation = () => {
+    // Calculate actual physical quantities from normalized inputs
+    const planetMass = orbitParams.mass * earthMass;
+    const orbitDistance = orbitParams.distance * AU;
+    
+    // Use Kepler's laws to calculate proper orbital velocity
+    // For circular orbit, v = sqrt(G*M/r)
+    const centralMass = sunMass;
+    // We'll adjust this by the orbitSpeed parameter to allow for different orbit shapes
+    const baseOrbitalVelocity = Math.sqrt(G * centralMass / orbitDistance);
+    const orbitalVelocity = baseOrbitalVelocity * orbitParams.velocity;
+    
     // Initialize celestial bodies
     const newBodies: CelestialBody[] = [
       // Star (Sun-like)
@@ -63,7 +73,7 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
         y: 0,
         vx: 0,
         vy: 0,
-        mass: 1.989e30, // Solar mass
+        mass: centralMass,
         radius: 15,
         color: '#ffcc00',
         trail: [],
@@ -71,11 +81,11 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
       },
       // Planet (Earth-like)
       {
-        x: 150e9, // 150 million km
+        x: orbitDistance,
         y: 0,
         vx: 0,
-        vy: 29.78e3, // Earth's orbital velocity
-        mass: 5.972e24, // Earth mass
+        vy: orbitalVelocity,
+        mass: planetMass,
         radius: 6,
         color: '#3498db',
         trail: [],
@@ -152,6 +162,12 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
       // Create a deep copy of the bodies array
       const newBodies = JSON.parse(JSON.stringify(prevBodies));
       
+      // Calculate gravitational forces and orbital data
+      let currentGravitationalForce = 0;
+      let currentDistance = 0;
+      let currentVelocity = 0;
+      let orbitalPeriod = 0;
+      
       // Calculate forces between all bodies
       for (let i = 0; i < newBodies.length; i++) {
         let fx = 0;
@@ -170,6 +186,16 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
             // Resolve force into components
             fx += force * dx / distance;
             fy += force * dy / distance;
+            
+            // Calculate data for the planet (assuming the second body is the planet)
+            if (newBodies[i].name === "Planet" && newBodies[j].name === "Star") {
+              currentGravitationalForce = force;
+              currentDistance = distance;
+              const velocity = Math.sqrt(newBodies[i].vx * newBodies[i].vx + newBodies[i].vy * newBodies[i].vy);
+              currentVelocity = velocity;
+              // Estimate orbital period using Kepler's third law
+              orbitalPeriod = 2 * Math.PI * Math.sqrt(Math.pow(distance, 3) / (G * newBodies[j].mass));
+            }
           }
         }
         
@@ -197,6 +223,17 @@ const OrbitVisualization: React.FC<OrbitVisualizationProps> = ({
         // Update position
         newBodies[i].x += newBodies[i].vx * scaledTimeStep;
         newBodies[i].y += newBodies[i].vy * scaledTimeStep;
+      }
+      
+      // Update orbit data if callback provided
+      if (onDataUpdate) {
+        onDataUpdate({
+          gravitationalForce: currentGravitationalForce,
+          orbitalPeriod: orbitalPeriod,
+          currentDistance: currentDistance,
+          currentVelocity: currentVelocity,
+          bodies: newBodies
+        });
       }
       
       return newBodies;
