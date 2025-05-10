@@ -182,7 +182,3 @@ For questions, feedback, or suggestions:
 
 * Email Muhammad Harits at **[haritsnaufal479@gmail.com](mailto:haritsnaufal479@gmail.com)**
 * Or open an issue on the GitHub repo
-
----
-
-Let me know if kamu pengin versi markdown-nya langsung aku export juga ya.
